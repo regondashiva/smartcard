@@ -226,6 +226,25 @@ export default function ExplorePage() {
         </div>
       </div>
 
+      {/* AI Assistant Quick Help Strip */}
+      <div className="bg-[#102B35]/5 border border-[#102B35]/10 rounded-xl p-2.5 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-6 h-6 rounded-lg bg-[#17A890] flex items-center justify-center text-[#102B35] shrink-0">
+            <Sparkles className="w-3.5 h-3.5 text-[#102B35]" />
+          </div>
+          <p className="text-xs text-[#102B35] font-semibold truncate">
+            Need help finding items or comparing options?
+          </p>
+        </div>
+        <Link
+          href="/assistant"
+          className="text-xs font-bold text-[#17A890] hover:underline flex items-center gap-0.5 shrink-0 bg-white px-2.5 py-1 rounded-lg border border-[#E5EBE8] shadow-2xs"
+        >
+          <span>Ask AI Assistant</span>
+          <Sparkles className="w-3 h-3 text-[#17A890]" />
+        </Link>
+      </div>
+
       {/* Responsive Product Grid */}
       <ProductGrid
         products={filteredAndSortedProducts}

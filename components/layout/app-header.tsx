@@ -15,6 +15,7 @@ import {
   Clock,
   ChevronRight,
   BellOff,
+  Sparkles,
 } from "lucide-react";
 
 function formatRelTime(iso: string): string {
@@ -86,6 +87,15 @@ export function AppHeader() {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
+              {/* SmartCart AI Assistant */}
+              <Link
+                href="/assistant"
+                aria-label="SmartCart AI Assistant"
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#17A890]/25 flex items-center justify-center text-[#25d3b6] hover:text-white transition-colors relative border border-white/10"
+              >
+                <Sparkles className="w-4 h-4 text-[#25d3b6]" />
+              </Link>
+
               {/* Notification Bell */}
               <div className="relative">
                 <button

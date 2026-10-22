@@ -303,6 +303,30 @@ function ProductDetailsContent({ id }: { id: string }) {
         )}
       </div>
 
+        {/* AI Assistant Alternatives / Comparison Callout */}
+        <div className="bg-[#102B35]/5 border border-[#102B35]/15 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#17A890] flex items-center justify-center text-[#102B35] shrink-0 shadow-xs">
+              <Sparkles className="w-4 h-4 text-[#102B35]" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-[#102B35]">
+                Compare or find alternatives to {product.name}
+              </h4>
+              <p className="text-[11px] text-slate-500">
+                Ask our AI Shopping Assistant to find cheaper options or budget pairings
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/assistant"
+            className="inline-flex items-center justify-center gap-1.5 bg-[#102B35] hover:bg-[#183d4a] text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors shrink-0 shadow-xs"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#17A890]" />
+            <span>Ask Assistant</span>
+          </Link>
+        </div>
+
       {/* Related Products ("You may also like") */}
       {relatedProducts.length > 0 && (
         <div className="space-y-3 pt-2">

@@ -10,6 +10,7 @@ import {
   ScanLine,
   ShoppingCart,
   User,
+  Sparkles,
 } from "lucide-react";
 
 export function BottomNavigation() {
@@ -33,6 +34,11 @@ export function BottomNavigation() {
       href: "/scan",
       icon: ScanLine,
       isPrimaryAction: true,
+    },
+    {
+      label: "Assistant",
+      href: "/assistant",
+      icon: Sparkles,
     },
     {
       label: "Cart",
