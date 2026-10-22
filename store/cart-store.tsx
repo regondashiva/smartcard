@@ -5,6 +5,16 @@ import { Product } from "@/types/product";
 import { CartItem, ShoppingSession, StoreLocation } from "@/types/cart";
 import { MOCK_STORES } from "@/data/products";
 
+import { parseProductWeightInGrams } from "@/lib/utils";
+
+export interface ExpectedWeightResult {
+  totalGrams: number;
+  formattedKg: string;
+  complete: boolean;
+  knownItemsCount: number;
+  totalItemsCount: number;
+}
+
 export interface ToastNotification {
   id: string;
   title: string;
@@ -17,16 +27,22 @@ interface CartContextType {
   session: ShoppingSession;
   selectedStore: StoreLocation;
   toast: ToastNotification | null;
+  lastRemovedItem: CartItem | null;
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: string) => void;
+  undoRemoveItem: () => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   startSession: () => void;
+  pauseSession: () => void;
+  resumeSession: () => void;
   endSession: () => void;
   switchStore: (store: StoreLocation) => void;
   getItemCount: () => number;
+  getDistinctCount: () => number;
   getSubtotal: () => number;
   getSavings: () => number;
+  getExpectedWeight: () => ExpectedWeightResult;
   showToast: (title: string, message: string, type?: "success" | "info" | "warning") => void;
   dismissToast: () => void;
 }
@@ -41,6 +57,7 @@ const DEFAULT_STORE: StoreLocation = MOCK_STORES[0];
 const INITIAL_INACTIVE_SESSION: ShoppingSession = {
   id: "DEMO-INACTIVE",
   isActive: false,
+  status: "inactive",
   storeId: DEFAULT_STORE.id,
   storeName: DEFAULT_STORE.name,
   storeLocation: DEFAULT_STORE.address,
@@ -53,6 +70,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<ShoppingSession>(INITIAL_INACTIVE_SESSION);
   const [selectedStore, setSelectedStore] = useState<StoreLocation>(DEFAULT_STORE);
   const [toast, setToast] = useState<ToastNotification | null>(null);
+  const [lastRemovedItem, setLastRemovedItem] = useState<CartItem | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Hydrate from localStorage safely on client mount
@@ -128,10 +146,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => {
       const item = prev.find((i) => i.product.id === productId);
       if (item) {
+        setLastRemovedItem(item);
         showToast("Removed from Cart", `${item.product.name} was removed.`, "info");
       }
       return prev.filter((i) => i.product.id !== productId);
     });
+  };
+
+  const undoRemoveItem = () => {
+    if (!lastRemovedItem) return;
+    setItems((prev) => {
+      const exists = prev.some((i) => i.product.id === lastRemovedItem.product.id);
+      if (exists) return prev;
+      return [...prev, lastRemovedItem];
+    });
+    showToast("Item Restored", `${lastRemovedItem.product.name} was restored to cart.`, "success");
+    setLastRemovedItem(null);
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
@@ -156,6 +186,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const newSession: ShoppingSession = {
       id: newSessionId,
       isActive: true,
+      status: "active",
       storeId: selectedStore.id,
       storeName: selectedStore.name,
       storeLocation: selectedStore.address,
@@ -165,6 +196,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
     setSession(newSession);
     showToast("Demo Session Started", `Session ${newSessionId} linked to ${newSession.cartTag}.`, "success");
+  };
+
+  const pauseSession = () => {
+    if (!session.isActive) return;
+    setSession((prev) => ({ ...prev, status: "paused" }));
+    showToast("Session Paused", "Shopping session temporarily paused.", "info");
+  };
+
+  const resumeSession = () => {
+    if (!session.isActive) return;
+    setSession((prev) => ({ ...prev, status: "active" }));
+    showToast("Session Resumed", "Shopping session resumed.", "success");
   };
 
   const endSession = () => {
@@ -189,6 +232,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return items.reduce((sum, item) => sum + item.quantity, 0);
   };
 
+  const getDistinctCount = () => {
+    return items.length;
+  };
+
   const getSubtotal = () => {
     return items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   };
@@ -202,6 +249,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }, 0);
   };
 
+  const getExpectedWeight = (): ExpectedWeightResult => {
+    let totalGrams = 0;
+    let knownItemsCount = 0;
+    let totalItemsCount = 0;
+
+    items.forEach((item) => {
+      totalItemsCount += item.quantity;
+      const unitGrams = parseProductWeightInGrams(item.product.unit, item.product.weight);
+      if (unitGrams !== null) {
+        totalGrams += unitGrams * item.quantity;
+        knownItemsCount += item.quantity;
+      }
+    });
+
+    return {
+      totalGrams,
+      formattedKg: (totalGrams / 1000).toFixed(2),
+      complete: items.length > 0 && knownItemsCount === totalItemsCount,
+      knownItemsCount,
+      totalItemsCount,
+    };
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -209,16 +279,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
         session,
         selectedStore,
         toast,
+        lastRemovedItem,
         addItem,
         removeItem,
+        undoRemoveItem,
         updateQuantity,
         clearCart,
         startSession,
+        pauseSession,
+        resumeSession,
         endSession,
         switchStore,
         getItemCount,
+        getDistinctCount,
         getSubtotal,
         getSavings,
+        getExpectedWeight,
         showToast,
         dismissToast,
       }}
