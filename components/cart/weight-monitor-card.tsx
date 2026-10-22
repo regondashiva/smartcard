@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { ExpectedWeightResult } from "@/store/cart-store";
 import {
   Scale,
@@ -111,13 +112,22 @@ export function WeightMonitorCard({
         </div>
       </div>
 
-      {/* Transparent Explanation Notice */}
-      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-2.5 flex items-start gap-2 text-[11px] text-[#718096] leading-snug">
-        <Cpu className="w-4 h-4 text-[#17A890] shrink-0 mt-0.5" />
-        <p>
-          Physical cart load cells and real-time weight delta anti-theft validation activate in{" "}
-          <strong className="text-[#102B35]">Module 6 (Security & Verification)</strong>. Expected weight is computed mathematically from your scanned items.
-        </p>
+      {/* Transparent Explanation Notice & Link */}
+      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-2.5 space-y-2 text-[11px] text-[#718096]">
+        <div className="flex items-start gap-2 leading-snug">
+          <Cpu className="w-4 h-4 text-[#17A890] shrink-0 mt-0.5" />
+          <p>
+            Cart load cells cross-check physical scale readings against scanned barcodes for anti-theft security.
+          </p>
+        </div>
+
+        <Link
+          href="/cart/verification"
+          className="text-xs font-bold text-[#17A890] hover:text-[#128673] flex items-center justify-between pt-1 border-t border-slate-200 transition-colors"
+        >
+          <span>Open Verification & Mismatch Hub</span>
+          <span className="text-xs">→</span>
+        </Link>
       </div>
     </div>
   );

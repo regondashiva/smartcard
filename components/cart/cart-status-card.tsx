@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import {
   ShieldAlert,
   ShieldCheck,
@@ -49,11 +50,15 @@ export function CartStatusCard({
         </div>
       </div>
 
-      <div className="pt-2 border-t border-[#E5EBE8] flex items-center justify-between text-[11px] text-[#718096]">
-        <span>Next Step:</span>
-        <span className="font-bold text-[#17A890]">
-          Scan more items or review bill below
-        </span>
+      <div className="pt-2 border-t border-[#E5EBE8] flex items-center justify-between text-[11px]">
+        <Link
+          href="/cart/verification"
+          className="text-xs font-bold text-[#17A890] hover:text-[#128673] flex items-center gap-1 transition-colors"
+        >
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>Open SmartCart Scale Verification Hub</span>
+          <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
     </div>
   );
