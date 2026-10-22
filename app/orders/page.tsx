@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Store,
   Filter,
+  TrendingUp,
 } from "lucide-react";
 
 export default function OrdersPage() {
@@ -80,13 +81,22 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        <Link
-          href="/explore"
-          className="w-8 h-8 rounded-xl bg-white border border-[#E5EBE8] flex items-center justify-center text-[#102B35] hover:bg-[#F7F9F8] transition-colors"
-          title="Browse catalogue"
-        >
-          <ShoppingBag className="w-4 h-4 text-[#17A890]" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/my-shopping"
+            className="text-xs font-bold text-[#17A890] hover:underline flex items-center gap-1"
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>Insights</span>
+          </Link>
+          <Link
+            href="/explore"
+            className="w-8 h-8 rounded-xl bg-white border border-[#E5EBE8] flex items-center justify-center text-[#102B35] hover:bg-[#F7F9F8] transition-colors"
+            title="Browse catalogue"
+          >
+            <ShoppingBag className="w-4 h-4 text-[#17A890]" />
+          </Link>
+        </div>
       </header>
 
       {/* Active Exit Pass Alert Banner (if any order is ready for exit) */}

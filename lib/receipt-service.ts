@@ -123,6 +123,118 @@ const DEMO_ORDERS: DigitalReceipt[] = [
     customerName: "Rahul Sharma",
     customerPhone: "+91 98765 43210",
   },
+  {
+    orderId: "SC-DEMO-8410",
+    receiptNumber: "REC-2026-8410",
+    transactionId: "UPI8410294821",
+    storeId: "store-flagship-indiranagar",
+    storeName: "SmartCart Flagship Indiranagar",
+    storeAddress: "100ft Road, HAL 2nd Stage, Indiranagar, Bengaluru, KA 560038",
+    storeGstin: "29AABCS1429B1Z8",
+    cartTag: "SmartCart #12",
+    purchaseDate: "2026-10-17T11:30:00.000Z",
+    items: [
+      {
+        productId: "prod-milk-amul",
+        productName: "Amul Taaza Homogenised Toned Milk",
+        brand: "Amul",
+        unit: "500 ml",
+        quantity: 2,
+        unitPrice: 33,
+        originalPrice: 35,
+        itemDiscount: 4,
+        total: 66,
+        imageUrl:
+          "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80",
+      },
+      {
+        productId: "prod-apples-kashmir",
+        productName: "Kashmiri Royal Delicious Apples",
+        brand: "Himalayan Orchards",
+        unit: "1 kg (4-5 pcs)",
+        quantity: 1,
+        unitPrice: 180,
+        originalPrice: 210,
+        itemDiscount: 30,
+        total: 180,
+        imageUrl:
+          "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80",
+      },
+    ],
+    itemCount: 3,
+    distinctProducts: 2,
+    grossSubtotal: 280,
+    savings: 34,
+    netSubtotal: 246,
+    taxInclusiveAmount: 12.3,
+    convenienceFee: 0,
+    finalAmount: 246,
+    currency: "INR",
+    paymentMethod: "UPI (PhonePe)",
+    paymentStatus: "success",
+    orderStatus: "exited",
+    exitStatus: "completed",
+    exitCode: "K9R4",
+    exitValidatedAt: "2026-10-17T11:42:00.000Z",
+    customerName: "Rahul Sharma",
+    customerPhone: "+91 98765 43210",
+  },
+  {
+    orderId: "SC-DEMO-7950",
+    receiptNumber: "REC-2026-7950",
+    transactionId: "UPI7950183749",
+    storeId: "store-flagship-indiranagar",
+    storeName: "SmartCart Flagship Indiranagar",
+    storeAddress: "100ft Road, HAL 2nd Stage, Indiranagar, Bengaluru, KA 560038",
+    storeGstin: "29AABCS1429B1Z8",
+    cartTag: "SmartCart #03",
+    purchaseDate: "2026-10-08T16:20:00.000Z",
+    items: [
+      {
+        productId: "prod-bread-modern",
+        productName: "Modern 100% Whole Wheat Brown Bread",
+        brand: "Modern",
+        unit: "400 g",
+        quantity: 1,
+        unitPrice: 50,
+        originalPrice: 55,
+        itemDiscount: 5,
+        total: 50,
+        imageUrl:
+          "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+      },
+      {
+        productId: "prod-bananas-robusta",
+        productName: "Fresh Robusta Bananas",
+        brand: "Farm Direct",
+        unit: "1 kg (5-6 pcs)",
+        quantity: 1,
+        unitPrice: 45,
+        originalPrice: 55,
+        itemDiscount: 10,
+        total: 45,
+        imageUrl:
+          "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=600&q=80",
+      },
+    ],
+    itemCount: 2,
+    distinctProducts: 2,
+    grossSubtotal: 110,
+    savings: 15,
+    netSubtotal: 95,
+    taxInclusiveAmount: 4.75,
+    convenienceFee: 0,
+    finalAmount: 95,
+    currency: "INR",
+    paymentMethod: "UPI (Paytm)",
+    paymentStatus: "success",
+    orderStatus: "exited",
+    exitStatus: "completed",
+    exitCode: "M2P7",
+    exitValidatedAt: "2026-10-08T16:34:00.000Z",
+    customerName: "Rahul Sharma",
+    customerPhone: "+91 98765 43210",
+  },
 ];
 
 // In-memory store for server-side persistence during current Node process
@@ -291,6 +403,21 @@ export function getAllOrders(): OrderHistoryItem[] {
     hasReceipt: true,
     exitCode: o.exitCode,
   }));
+}
+
+export function getFullOrders(): DigitalReceipt[] {
+  let orders: DigitalReceipt[] = [];
+  if (typeof window !== "undefined") {
+    orders = loadClientOrders();
+  } else {
+    orders = Array.from(globalOrderMap.values());
+  }
+
+  orders.sort(
+    (a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime()
+  );
+
+  return orders;
 }
 
 // ─── Refresh / Request Exit Credential ────────────────────────────────────────

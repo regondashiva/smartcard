@@ -28,6 +28,7 @@ import {
   RotateCcw,
   Receipt,
   QrCode,
+  TrendingUp,
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -221,6 +222,22 @@ export default function ProfilePage() {
 
       {/* Account Settings Menu */}
       <div className="bg-white rounded-3xl border border-[#E5EBE8] overflow-hidden shadow-sm divide-y divide-[#E5EBE8]">
+        <Link
+          href="/my-shopping"
+          className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#18252B]">Shopping Insights &amp; Buy Again</p>
+              <p className="text-[10px] text-[#718096]">Monthly spending breakdown, 1-tap reorders &amp; recommendations</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#718096]" />
+        </Link>
+
         <Link
           href="/orders"
           className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
