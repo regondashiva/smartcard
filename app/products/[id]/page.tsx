@@ -32,9 +32,8 @@ interface ProductDetailsPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
+function ProductDetailsContent({ id }: { id: string }) {
   const router = useRouter();
-  const { id } = use(params);
   const { items, addItem, updateQuantity, getItemCount } = useCart();
   const cartItemCount = getItemCount();
 
@@ -375,5 +374,24 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
         </div>
       </div>
     </div>
+  );
+}
+
+function ProductDetailsResolved({ params }: ProductDetailsPageProps) {
+  const { id } = use(params);
+  return <ProductDetailsContent id={id} />;
+}
+
+export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="max-w-md mx-auto py-12 text-center text-xs text-[#718096]">
+          Loading product details...
+        </div>
+      }
+    >
+      <ProductDetailsResolved params={params} />
+    </React.Suspense>
   );
 }
