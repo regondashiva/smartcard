@@ -4,9 +4,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/store/auth-store";
 import { CartProvider } from "@/store/cart-store";
+import { NotificationProvider } from "@/store/notification-store";
 import { AppHeader } from "@/components/layout/app-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import { ToastNotification } from "@/components/ui/toast-notification";
+import { NotificationToastOverlay } from "@/components/ui/notification-toast-overlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,24 +56,28 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[#F7F9F8] text-[#18252B] selection:bg-[#17A890]/20 selection:text-[#102B35]">
         <AuthProvider>
           <CartProvider>
-            {/* Global Toast Feedback */}
-            <ToastNotification />
+            <NotificationProvider>
+              {/* Global Toast Feedback */}
+              <ToastNotification />
+              <NotificationToastOverlay />
 
-            {/* Sticky Header */}
-            <AppHeader />
+              {/* Sticky Header */}
+              <AppHeader />
 
-            {/* Main Content Area */}
-            <main className="flex-1 w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 safe-pb">
-              {children}
-            </main>
+              {/* Main Content Area */}
+              <main className="flex-1 w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 safe-pb">
+                {children}
+              </main>
 
-            {/* Fixed Bottom Navigation */}
-            <React.Suspense fallback={null}>
-              <BottomNavigation />
-            </React.Suspense>
+              {/* Fixed Bottom Navigation */}
+              <React.Suspense fallback={null}>
+                <BottomNavigation />
+              </React.Suspense>
+            </NotificationProvider>
           </CartProvider>
         </AuthProvider>
       </body>
     </html>
   );
 }
+
