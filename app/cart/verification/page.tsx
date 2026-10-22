@@ -207,17 +207,23 @@ export default function CartVerificationPage() {
           </span>
         </div>
 
-        <Link
-          href="/cart"
-          className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.99] ${
-            summary.overallStatus === "verified"
-              ? "bg-[#17A890] hover:bg-[#128673] text-white"
-              : "bg-[#102B35] hover:bg-[#0B1D24] text-white"
-          }`}
-        >
-          <Lock className="w-4 h-4" />
-          <span>Return to Cart Summary</span>
-        </Link>
+        {summary.overallStatus === "verified" ? (
+          <Link
+            href="/checkout"
+            className="w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.99] bg-[#17A890] hover:bg-[#128673] text-white"
+          >
+            <Lock className="w-4 h-4" />
+            <span>Proceed to Checkout</span>
+          </Link>
+        ) : (
+          <Link
+            href="/cart"
+            className="w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.99] bg-[#102B35] hover:bg-[#0B1D24] text-white"
+          >
+            <Lock className="w-4 h-4" />
+            <span>Return to Cart Summary</span>
+          </Link>
+        )}
       </div>
 
       {/* Modals & Bottom Sheets */}

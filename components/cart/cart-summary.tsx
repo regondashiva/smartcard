@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/lib/utils";
 import {
   ShieldCheck,
   Tag,
   ArrowRight,
-  Sparkles,
   Info,
   CheckCircle2,
   Lock,
@@ -30,7 +30,7 @@ export function CartSummary({
   onProceedToCheckout,
   disabled = false,
 }: CartSummaryProps) {
-  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const router = useRouter();
 
   // Original list price before discounts
   const grossSubtotal = subtotal + savings;
@@ -40,7 +40,7 @@ export function CartSummary({
     if (onProceedToCheckout) {
       onProceedToCheckout();
     } else {
-      setIsCheckoutModalOpen(true);
+      router.push("/checkout");
     }
   };
 
@@ -146,45 +146,6 @@ export function CartSummary({
           </Link>
         </div>
       </div>
-
-      {/* Module 8 Future Checkout Placeholder Modal */}
-      {isCheckoutModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-150">
-          <div
-            className="w-full max-w-sm bg-white rounded-3xl border border-[#E5EBE8] shadow-2xl p-6 text-center space-y-4 animate-in zoom-in-95 duration-150"
-            role="dialog"
-            aria-modal="true"
-          >
-            <div className="w-14 h-14 rounded-2xl bg-[#17A890]/10 text-[#17A890] flex items-center justify-center mx-auto">
-              <Sparkles className="w-7 h-7" />
-            </div>
-
-            <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-[#17A890] bg-[#17A890]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                Module 8 Preview
-              </span>
-              <h3 className="text-base font-bold text-[#102B35]">
-                Digital Self-Checkout
-              </h3>
-              <p className="text-xs text-[#718096] leading-relaxed">
-                UPI, Credit/Debit card payments, and instant Exit QR Receipt generation will activate in Module 8. Your current cart total of{" "}
-                <span className="font-bold text-[#102B35]">
-                  {formatCurrency(subtotal)}
-                </span>{" "}
-                is saved.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setIsCheckoutModalOpen(false)}
-              className="w-full bg-[#102B35] hover:bg-[#0B1D24] text-white font-bold text-xs py-3 px-4 rounded-xl transition-colors shadow-md cursor-pointer"
-            >
-              Back to SmartCart
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 }
