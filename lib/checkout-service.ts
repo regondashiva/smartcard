@@ -8,6 +8,7 @@ import {
   PaymentMethodId,
   PaymentStatus,
 } from "@/types/checkout";
+import { saveOrderConfirmation } from "./receipt-service";
 
 // ─── Billing Engine ───────────────────────────────────────────────────────────
 // Uses integer paise arithmetic to avoid floating-point rounding errors.
@@ -135,7 +136,7 @@ export async function processPayment(
     store: session.storeId,
   });
 
-  return {
+  const confirmation: OrderConfirmation = {
     orderId,
     transactionId,
     paymentMethod: input.method,
@@ -150,6 +151,14 @@ export async function processPayment(
     status,
     exitCode,
   };
+
+  try {
+    saveOrderConfirmation(confirmation);
+  } catch {
+    // Non-fatal if server-side / client mismatch
+  }
+
+  return confirmation;
 }
 
 // ─── Payment Method Catalogue ────────────────────────────────────────────────

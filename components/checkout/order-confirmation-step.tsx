@@ -162,6 +162,25 @@ export function OrderConfirmationStep({
         </button>
       </div>
 
+      {/* Primary Module 8 Exit Pass and Digital Receipt Actions */}
+      <div className="space-y-2">
+        <Link
+          href={`/orders/${confirmation.orderId}/exit-pass`}
+          className="w-full py-3.5 px-4 rounded-xl font-bold text-xs bg-[#17A890] hover:bg-[#128673] text-white flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.99] text-center"
+        >
+          <Receipt className="w-4 h-4" />
+          <span>Open Exit Pass &amp; Gate QR</span>
+        </Link>
+
+        <Link
+          href={`/receipts/${confirmation.orderId}`}
+          className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-white border border-[#E5EBE8] text-[#102B35] hover:bg-[#F7F9F8] flex items-center justify-center gap-2 transition-all text-center shadow-2xs"
+        >
+          <Receipt className="w-4 h-4 text-[#17A890]" />
+          <span>View Digital Tax Receipt</span>
+        </Link>
+      </div>
+
       {/* Action buttons */}
       <div className="grid grid-cols-2 gap-3">
         <button
@@ -190,7 +209,7 @@ export function OrderConfirmationStep({
       <button
         type="button"
         onClick={onClearAndGoHome}
-        className="w-full py-4 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-[#102B35] hover:bg-[#0B1D24] text-white shadow-lg transition-all active:scale-[0.99] cursor-pointer"
+        className="w-full py-3.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-[#102B35] hover:bg-[#0B1D24] text-white shadow-md transition-all active:scale-[0.99] cursor-pointer"
       >
         <Home className="w-4 h-4" />
         Back to Home

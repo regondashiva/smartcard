@@ -23,7 +23,7 @@ export function AppHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#102B35] text-white shadow-md">
+      <header className="sticky top-0 z-40 bg-[#102B35] text-white shadow-md print:hidden">
         {/* Top announcement bar for Demo status */}
         <div className="bg-[#0B1D24] px-4 py-1 flex items-center justify-between text-[11px] text-slate-300 border-b border-white/5">
           <div className="flex items-center gap-1.5">

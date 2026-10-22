@@ -13,6 +13,7 @@ import {
   Info,
   ShieldCheck,
   CheckCircle2,
+  QrCode,
 } from "lucide-react";
 
 export default function ScanPage() {
@@ -80,6 +81,20 @@ export default function ScanPage() {
           </div>
         </div>
       )}
+
+      {/* Mode Switch: Store Exit Gate Kiosk */}
+      <div className="flex items-center justify-between bg-white border border-[#E5EBE8] rounded-2xl px-3.5 py-2.5 text-xs shadow-2xs">
+        <span className="text-[#718096] flex items-center gap-1.5 font-medium">
+          <QrCode className="w-3.5 h-3.5 text-[#17A890]" />
+          Store Exit Gate Scanner
+        </span>
+        <Link
+          href="/exit-scanner"
+          className="text-[#17A890] font-bold hover:underline flex items-center gap-1 text-[11px]"
+        >
+          <span>Open Kiosk &rarr;</span>
+        </Link>
+      </div>
 
       {/* Main Barcode Scanner Component */}
       <BarcodeScanner />

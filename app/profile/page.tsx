@@ -26,6 +26,8 @@ import {
   Zap,
   ShoppingBag,
   RotateCcw,
+  Receipt,
+  QrCode,
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -219,6 +221,38 @@ export default function ProfilePage() {
 
       {/* Account Settings Menu */}
       <div className="bg-white rounded-3xl border border-[#E5EBE8] overflow-hidden shadow-sm divide-y divide-[#E5EBE8]">
+        <Link
+          href="/orders"
+          className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#17A890] flex items-center justify-center">
+              <Receipt className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#18252B]">My Orders &amp; Digital Receipts</p>
+              <p className="text-[10px] text-[#718096]">Past shopping bills, tax invoices &amp; exit passes</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#718096]" />
+        </Link>
+
+        <Link
+          href="/exit-scanner"
+          className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-[#102B35]/10 text-[#102B35] flex items-center justify-center">
+              <QrCode className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#18252B]">Store Exit Gate Scanner</p>
+              <p className="text-[10px] text-[#718096]">Kiosk mode to validate customer exit passes</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#718096]" />
+        </Link>
+
         <Link
           href="/profile/edit"
           className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
