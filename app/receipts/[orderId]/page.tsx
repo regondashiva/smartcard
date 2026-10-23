@@ -24,7 +24,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 
-export default function ReceiptPage() {
+function ReceiptContent() {
   const params = useParams<{ orderId: string }>();
   const router = useRouter();
   const [receipt, setReceipt] = useState<DigitalReceipt | null>(null);
@@ -391,5 +391,19 @@ export default function ReceiptPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function ReceiptPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="max-w-md mx-auto min-h-screen p-4 flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-[#17A890] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <ReceiptContent />
+    </React.Suspense>
   );
 }

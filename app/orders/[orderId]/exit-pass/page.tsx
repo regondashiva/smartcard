@@ -22,7 +22,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-export default function ExitPassPage() {
+function ExitPassContent() {
   const params = useParams<{ orderId: string }>();
   const router = useRouter();
 
@@ -360,5 +360,19 @@ export default function ExitPassPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function ExitPassPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="max-w-md mx-auto min-h-screen p-4 flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-[#17A890] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <ExitPassContent />
+    </React.Suspense>
   );
 }
