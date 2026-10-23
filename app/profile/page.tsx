@@ -29,6 +29,10 @@ import {
   Receipt,
   QrCode,
   TrendingUp,
+  Settings,
+  HelpCircle,
+  Headphones,
+  Info,
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -324,6 +328,70 @@ export default function ProfilePage() {
                 )}
               </div>
               <p className="text-[10px] text-[#718096]">Receipt delivery & communication</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#718096]" />
+        </Link>
+
+        <Link
+          href="/settings"
+          className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <Settings className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#18252B]">Settings &amp; Preferences</p>
+              <p className="text-[10px] text-[#718096]">Notifications, language, privacy &amp; export</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#718096]" />
+        </Link>
+
+        <Link
+          href="/help"
+          className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <HelpCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#18252B]">Help Center &amp; Guides</p>
+              <p className="text-[10px] text-[#718096]">FAQs for scanning, billing, and exit passes</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#718096]" />
+        </Link>
+
+        <Link
+          href="/support"
+          className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#17A890] flex items-center justify-center">
+              <Headphones className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#18252B]">Customer Support Desk</p>
+              <p className="text-[10px] text-[#718096]">Submit ticket or track in-store inquiries</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#718096]" />
+        </Link>
+
+        <Link
+          href="/about"
+          className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
+              <Info className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#18252B]">About SmartCart AI</p>
+              <p className="text-[10px] text-[#718096]">Version 1.2.0 • 12-Module Matrix</p>
             </div>
           </div>
           <ChevronRight className="w-4 h-4 text-[#718096]" />

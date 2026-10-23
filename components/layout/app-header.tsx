@@ -177,14 +177,24 @@ export function AppHeader() {
                       )}
 
                       {/* View all footer */}
-                      <Link
-                        href="/notifications"
-                        onClick={() => setIsNotifOpen(false)}
-                        className="flex items-center justify-center gap-1.5 w-full py-3 text-xs font-bold text-[#17A890] hover:bg-teal-50 border-t border-[#E5EBE8] transition-colors"
-                      >
-                        View all notifications
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </Link>
+                      <div className="grid grid-cols-2 divide-x divide-[#E5EBE8] border-t border-[#E5EBE8]">
+                        <Link
+                          href="/notifications"
+                          onClick={() => setIsNotifOpen(false)}
+                          className="flex items-center justify-center gap-1 py-2.5 text-xs font-bold text-[#17A890] hover:bg-teal-50 transition-colors"
+                        >
+                          <span>All Alerts</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </Link>
+                        <Link
+                          href="/settings/notifications"
+                          onClick={() => setIsNotifOpen(false)}
+                          className="flex items-center justify-center gap-1 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+                        >
+                          <span>Settings</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
                     </div>
                   </>
                 )}
