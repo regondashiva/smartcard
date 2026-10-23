@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/store/cart-store";
@@ -10,13 +10,16 @@ import {
   ScanLine,
   ShoppingCart,
   User,
-  Sparkles,
 } from "lucide-react";
 
 export function BottomNavigation() {
   const pathname = usePathname();
   const { getItemCount } = useCart();
   const itemCount = getItemCount();
+
+  // Defer badge rendering to client to prevent SSR/client hydration mismatch
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const navItems = [
     {
@@ -34,11 +37,6 @@ export function BottomNavigation() {
       href: "/scan",
       icon: ScanLine,
       isPrimaryAction: true,
-    },
-    {
-      label: "Assistant",
-      href: "/assistant",
-      icon: Sparkles,
     },
     {
       label: "Cart",
@@ -106,7 +104,7 @@ export function BottomNavigation() {
                     isActive ? "stroke-[2.4]" : "stroke-[1.8]"
                   }`}
                 />
-                {item.badge !== undefined && (
+                {mounted && item.badge !== undefined && (
                   <span
                     aria-label={`${item.badge} items in cart`}
                     className="absolute -top-1.5 -right-2 bg-[#D97706] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white animate-in zoom-in-75 duration-150"

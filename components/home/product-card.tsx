@@ -13,12 +13,14 @@ export interface ProductCardProps {
   product: Product;
   onPreview?: (product: Product) => void;
   compact?: boolean;
+  priority?: boolean;
 }
 
 export function ProductCard({
   product,
   onPreview,
   compact = false,
+  priority = false,
 }: ProductCardProps) {
   const router = useRouter();
   const { items, addItem, updateQuantity } = useCart();
@@ -60,7 +62,7 @@ export function ProductCard({
               !product.inStock ? "grayscale opacity-60" : ""
             }`}
             sizes="(max-width: 640px) 176px, 240px"
-            loading="lazy"
+            priority={priority}
             onError={() => setImageError(true)}
           />
         ) : (

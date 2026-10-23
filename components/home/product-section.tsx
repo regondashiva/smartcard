@@ -58,12 +58,13 @@ export function ProductSection({
       {/* Render Carousel or Grid */}
       {variant === "carousel" ? (
         <div className="flex items-stretch gap-3 overflow-x-auto pb-2 pt-0.5 no-scrollbar scroll-smooth">
-          {products.map((product) => (
+          {products.map((product, idx) => (
             <ProductCard
               key={product.id}
               product={product}
               onPreview={onPreview}
               compact
+              priority={idx < 2}
             />
           ))}
         </div>

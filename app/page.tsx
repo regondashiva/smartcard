@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
 import { CATEGORIES } from "@/data/categories";
 import { Product } from "@/types/product";
@@ -12,7 +11,7 @@ import { CategoryList } from "@/components/home/category-list";
 import { ProductSection } from "@/components/home/product-section";
 import { ShoppingBenefits } from "@/components/home/shopping-benefits";
 import { ProductPreviewModal } from "@/components/products/product-preview-modal";
-import { Sparkles, Flame, X, CheckCircle2, Bot, ArrowRight } from "lucide-react";
+import { Sparkles, Flame, X } from "lucide-react";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,64 +65,6 @@ export default function HomePage() {
       {/* 2. Smart Shopping Session Card */}
       <section aria-label="Shopping Session">
         <ShoppingSessionCard onBrowseClick={scrollToProducts} />
-      </section>
-
-      {/* 2.5 SmartCart AI Assistant Feature Card */}
-      <section aria-label="AI Shopping Assistant">
-        <div className="bg-gradient-to-br from-[#102B35] via-[#123845] to-[#0D242C] rounded-2xl p-4 text-white shadow-lg border border-[#17A890]/30 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-44 h-44 bg-[#17A890]/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-[#17A890] flex items-center justify-center text-[#102B35] shadow-xs">
-                  <Bot className="w-4 h-4 text-[#102B35]" />
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-black tracking-wide uppercase text-[#25d3b6]">
-                    Module 11 • SmartCart AI
-                  </span>
-                  <span className="bg-white/10 text-[10px] font-semibold text-slate-300 px-1.5 py-0.2 rounded">
-                    Demo Mode
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <h3 className="text-base font-extrabold text-white tracking-tight mb-1">
-              AI Product Recommendations & Shopping Assistant
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed mb-3">
-              Describe what you need in plain English. Get instant budget-aware recommendations, side-by-side product comparisons, and tailored shopping lists directly from our live supermarket inventory.
-            </p>
-
-            {/* Quick action chips */}
-            <div className="flex flex-wrap gap-1.5 mb-3.5">
-              {[
-                "Under ₹500",
-                "Compare products",
-                "Shopping list for party",
-                "Frequently bought",
-              ].map((chip, idx) => (
-                <Link
-                  key={idx}
-                  href="/assistant"
-                  className="text-[11px] font-medium bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white px-2.5 py-1 rounded-full border border-white/10 transition-colors"
-                >
-                  {chip}
-                </Link>
-              ))}
-            </div>
-
-            <Link
-              href="/assistant"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#17A890] hover:bg-[#138975] text-[#102B35] hover:text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all active:scale-98"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Chat with Shopping Assistant</span>
-              <ArrowRight className="w-4 h-4 ml-0.5" />
-            </Link>
-          </div>
-        </div>
       </section>
 
       {/* 3. Promotional Banner */}

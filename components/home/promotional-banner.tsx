@@ -50,6 +50,7 @@ export function PromotionalBanner({ onLearnMore }: PromotionalBannerProps) {
           src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80"
           alt="Smart supermarket shopping experience"
           fill
+          priority
           className="object-cover opacity-60 mix-blend-luminosity hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 100vw, 176px"
         />

@@ -7,6 +7,7 @@ import { CartProvider } from "@/store/cart-store";
 import { NotificationProvider } from "@/store/notification-store";
 import { AppHeader } from "@/components/layout/app-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
+import { AIAssistantFAB } from "@/components/layout/ai-assistant-fab";
 import { ToastNotification } from "@/components/ui/toast-notification";
 import { NotificationToastOverlay } from "@/components/ui/notification-toast-overlay";
 
@@ -68,6 +69,11 @@ export default function RootLayout({
               <main className="flex-1 w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 safe-pb">
                 {children}
               </main>
+
+              {/* Floating AI Assistant Button */}
+              <React.Suspense fallback={null}>
+                <AIAssistantFAB />
+              </React.Suspense>
 
               {/* Fixed Bottom Navigation */}
               <React.Suspense fallback={null}>
