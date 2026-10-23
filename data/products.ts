@@ -470,7 +470,7 @@ export const PRODUCTS: Product[] = [
     price: 145,
     originalPrice: 165,
     unit: "120 g x 2 Combo",
-    imageUrl: "https://images.unsplash.com/photo-1559650656-5d1d427756a9?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80",
     inStock: true,
     stockCount: 21,
     offerLabel: "Save ₹20",

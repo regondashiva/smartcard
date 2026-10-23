@@ -8,6 +8,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isGuest: boolean;
   hasCompletedOnboarding: boolean;
+  isHydrated: boolean;
   pendingVerificationPhone: string | null;
   pendingVerificationEmail: string | null;
   login: (identifier: string, password: string) => Promise<{ success: boolean; error?: string }>;
@@ -248,6 +249,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated,
         isGuest,
         hasCompletedOnboarding,
+        isHydrated,
         pendingVerificationPhone,
         pendingVerificationEmail,
         login,

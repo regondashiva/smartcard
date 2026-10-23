@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { PRODUCTS } from "@/data/products";
 import { CATEGORIES } from "@/data/categories";
 import { Product } from "@/types/product";
@@ -11,15 +11,29 @@ import { CategoryList } from "@/components/home/category-list";
 import { ProductSection } from "@/components/home/product-section";
 import { ShoppingBenefits } from "@/components/home/shopping-benefits";
 import { ProductPreviewModal } from "@/components/products/product-preview-modal";
+import { SplashScreen } from "@/components/splash/splash-screen";
 import { Sparkles, Flame, X } from "lucide-react";
 
 export default function HomePage() {
+  const [showSplash, setShowSplash] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
   const [previewProduct, setPreviewProduct] = useState<Product | null>(null);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   const productSectionRef = useRef<HTMLDivElement>(null);
+
+  // Check if splash screen should be shown on initial session launch
+  useEffect(() => {
+    try {
+      const splashSeen = sessionStorage.getItem("smartcart_splash_seen");
+      if (!splashSeen) {
+        setShowSplash(true);
+      }
+    } catch {
+      // Ignore sessionStorage errors
+    }
+  }, []);
 
   // Filter products based on selected category & search query
   const filteredProducts = PRODUCTS.filter((product) => {
@@ -51,8 +65,12 @@ export default function HomePage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* 1. Prominent Search Bar */}
+    <>
+      {showSplash && (
+        <SplashScreen onComplete={() => setShowSplash(false)} />
+      )}
+      <div className="space-y-6">
+        {/* 1. Prominent Search Bar */}
       <section aria-label="Product Search">
         <SearchBar
           products={PRODUCTS}
@@ -233,5 +251,6 @@ export default function HomePage() {
         </div>
       )}
     </div>
+    </>
   );
 }

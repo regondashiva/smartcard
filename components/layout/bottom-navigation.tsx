@@ -21,6 +21,9 @@ export function BottomNavigation() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
+  // Do not render bottom navigation on splash screen
+  if (pathname === "/splash") return null;
+
   const navItems = [
     {
       label: "Home",

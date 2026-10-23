@@ -63,7 +63,9 @@ export default function RootLayout({
               <NotificationToastOverlay />
 
               {/* Sticky Header */}
-              <AppHeader />
+              <React.Suspense fallback={<header className="sticky top-0 z-40 bg-[#102B35] h-14" />}>
+                <AppHeader />
+              </React.Suspense>
 
               {/* Main Content Area */}
               <main className="flex-1 w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 safe-pb">

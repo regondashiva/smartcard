@@ -15,8 +15,8 @@ export function AIAssistantFAB() {
     setShowTooltip(false);
   }, [pathname]);
 
-  // Don't render on the assistant page itself
-  if (pathname === "/assistant") return null;
+  // Don't render on the assistant page or splash screen
+  if (pathname === "/assistant" || pathname === "/splash") return null;
 
   return (
     <div
