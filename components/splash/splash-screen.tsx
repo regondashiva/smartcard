@@ -50,7 +50,7 @@ export function SplashScreen({ onComplete, standalone = false }: SplashScreenPro
           router.replace("/");
         }
       }
-    }, 2000);
+    }, 4000);
 
     return () => {
       clearTimeout(timer);
@@ -255,7 +255,7 @@ export function SplashScreen({ onComplete, standalone = false }: SplashScreenPro
           <div
             className="h-full bg-gradient-to-r from-[#17A890] via-[#20be9f] to-[#25d3b6] rounded-full animate-splash-progress"
             style={{
-              animation: "splashProgress 2000ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
+              animation: "splashProgress 4000ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
             }}
           />
         </div>
