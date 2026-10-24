@@ -68,7 +68,7 @@ export default function RootLayout({
               </React.Suspense>
 
               {/* Main Content Area */}
-              <main className="flex-1 w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 safe-pb">
+              <main className="flex-1 w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3 safe-pb">
                 {children}
               </main>
 

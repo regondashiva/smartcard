@@ -17,8 +17,16 @@ export function AIAssistantFAB() {
     setShowTooltip(false);
   }, [pathname]);
 
-  // Don't render on the assistant page or splash screen
-  if (pathname === "/assistant" || pathname === "/splash" || isSplash) return null;
+  // Don't render on the assistant page, splash screen, checkout, or receipts
+  if (
+    pathname === "/assistant" ||
+    pathname === "/splash" ||
+    isSplash ||
+    pathname.startsWith("/checkout") ||
+    pathname.startsWith("/receipts")
+  ) {
+    return null;
+  }
 
   return (
     <div

@@ -23,8 +23,15 @@ export function BottomNavigation() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  // Do not render bottom navigation on splash screen
-  if (pathname === "/splash" || isSplash) return null;
+  // Do not render bottom navigation on splash screen, checkout, or receipts
+  if (
+    pathname === "/splash" ||
+    isSplash ||
+    pathname.startsWith("/checkout") ||
+    pathname.startsWith("/receipts")
+  ) {
+    return null;
+  }
 
   const navItems = [
     {

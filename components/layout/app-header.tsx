@@ -117,7 +117,7 @@ export function AppHeader() {
     : "";
 
   const isSplash = useIsSplashActive();
-  if (pathname === "/splash" || isSplash) return null;
+  if (pathname === "/splash" || isSplash || pathname.startsWith("/checkout")) return null;
 
   return (
     <>

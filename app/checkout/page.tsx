@@ -30,6 +30,7 @@ import {
   ShoppingBag,
   ArrowLeft,
   Store,
+  ChevronLeft,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -106,9 +107,9 @@ export default function CheckoutPage() {
     try {
       const orderConf = await processPayment(currentBill, paymentInput, {
         id: session.id || "SESSION-DEMO",
-        cartTag: session.cartTag || "SmartCart #12",
+        cartTag: session.cartTag || "SmartCart #18",
         storeId: selectedStore.id || session.storeId || "STORE-01",
-        storeName: selectedStore.name || session.storeName || "SmartCart Flagship",
+        storeName: selectedStore.name || session.storeName || "SmartCart Supermarket",
       });
       setConfirmation(orderConf);
       setStep("confirmation");
@@ -128,9 +129,9 @@ export default function CheckoutPage() {
 
   if (!mounted) {
     return (
-      <div className="max-w-md mx-auto min-h-screen p-4 flex flex-col items-center justify-center space-y-4">
+      <div className="max-w-md mx-auto min-h-screen p-6 flex flex-col items-center justify-center space-y-4">
         <div className="w-10 h-10 border-3 border-[#17A890] border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs font-semibold text-[#718096]">Loading checkout…</p>
+        <p className="text-xs font-bold text-[#718096]">Loading secure checkout…</p>
       </div>
     );
   }
@@ -138,28 +139,28 @@ export default function CheckoutPage() {
   // If cart is empty and not on confirmation
   if (items.length === 0 && !confirmation && step !== "confirmation") {
     return (
-      <div className="max-w-md mx-auto min-h-screen p-4 space-y-6 flex flex-col justify-center items-center text-center">
+      <div className="max-w-md mx-auto min-h-[80vh] px-4 py-12 flex flex-col justify-center items-center text-center space-y-6">
         <div className="w-20 h-20 rounded-3xl bg-[#17A890]/10 text-[#17A890] flex items-center justify-center shadow-inner">
           <ShoppingBag className="w-10 h-10" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-xl font-black text-[#102B35]">Your SmartCart is Empty</h1>
-          <p className="text-xs text-[#718096] max-w-xs mx-auto">
-            Add products using the scanner or explore our store catalogue to proceed to self-checkout.
+          <h1 className="text-xl font-black text-[#102B35]">Your Cart is Empty</h1>
+          <p className="text-xs text-[#718096] max-w-xs mx-auto leading-relaxed">
+            Scan items in the supermarket aisle or browse our catalogue to begin self-checkout.
           </p>
         </div>
         <div className="flex flex-col gap-2.5 w-full max-w-xs">
           <Link
             href="/explore"
-            className="w-full py-3.5 px-4 rounded-xl font-bold text-xs bg-[#17A890] hover:bg-[#128673] text-white shadow-md transition-all active:scale-[0.99] text-center"
+            className="w-full py-3.5 px-4 rounded-2xl font-bold text-xs bg-[#17A890] hover:bg-[#128673] text-white shadow-md transition-all active:scale-[0.99] text-center"
           >
-            Browse Store Catalogue
+            Browse Products &amp; Deals
           </Link>
           <Link
             href="/scan"
-            className="w-full py-3.5 px-4 rounded-xl font-bold text-xs bg-white border border-[#E5EBE8] text-[#102B35] hover:bg-[#F7F9F8] transition-all text-center"
+            className="w-full py-3.5 px-4 rounded-2xl font-bold text-xs bg-white border border-[#E2EBE6] text-[#102B35] hover:bg-[#F8FAF9] transition-all text-center"
           >
-            Scan Barcodes
+            Scan Aisle Barcodes
           </Link>
         </div>
       </div>
@@ -167,54 +168,62 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto min-h-screen p-4 pb-20 space-y-4">
-      {/* Header */}
-      <header className="flex items-center justify-between pt-1">
-        <div className="flex items-center gap-2">
-          {step === "payment" ? (
-            <button
-              type="button"
-              onClick={() => setStep("review")}
-              className="w-8 h-8 rounded-xl bg-white border border-[#E5EBE8] flex items-center justify-center text-[#102B35] hover:bg-[#F7F9F8] transition-colors cursor-pointer"
-              aria-label="Back to order review"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-          ) : step === "review" ? (
-            <Link
-              href="/cart"
-              className="w-8 h-8 rounded-xl bg-white border border-[#E5EBE8] flex items-center justify-center text-[#102B35] hover:bg-[#F7F9F8] transition-colors"
-              aria-label="Back to cart"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
-          ) : null}
+    <div className="w-full space-y-4">
+      {/* Dedicated Checkout Header (Hidden on final confirmation for full-view ticket layout) */}
+      {step !== "confirmation" && (
+        <header className="sticky top-0 z-30 bg-[#F8FAF9]/95 backdrop-blur-md pt-1 pb-2 flex items-center justify-between border-b border-[#E2EBE6]">
+          <div className="flex items-center gap-2.5">
+            {step === "payment" ? (
+              <button
+                type="button"
+                onClick={() => setStep("review")}
+                className="w-9 h-9 rounded-2xl bg-white border border-[#DCE4E0] flex items-center justify-center text-[#102B35] hover:bg-[#F0F4F2] transition-colors cursor-pointer shadow-2xs"
+                aria-label="Back to order review"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            ) : step === "review" ? (
+              <Link
+                href="/cart"
+                className="w-9 h-9 rounded-2xl bg-white border border-[#DCE4E0] flex items-center justify-center text-[#102B35] hover:bg-[#F0F4F2] transition-colors shadow-2xs"
+                aria-label="Back to cart"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Link>
+            ) : null}
 
-          <div>
-            <h1 className="text-base font-black text-[#102B35] flex items-center gap-1.5">
-              <span>Checkout</span>
-              <Lock className="w-3.5 h-3.5 text-[#17A890]" />
-            </h1>
-            <p className="text-[10px] text-[#718096] flex items-center gap-1">
-              <Store className="w-3 h-3 text-[#17A890]" />
-              <span>{selectedStore.name || "SmartCart Flagship"}</span>
-              <span>•</span>
-              <span>{session.cartTag || "SmartCart #12"}</span>
-            </p>
+            <div>
+              <h1 className="text-sm font-black text-[#102B35] flex items-center gap-1.5 leading-tight">
+                <span>Self-Checkout</span>
+                <Lock className="w-3.5 h-3.5 text-[#17A890]" />
+              </h1>
+              <p className="text-[10px] text-[#718096] flex items-center gap-1 font-medium mt-0.5">
+                <Store className="w-3 h-3 text-[#17A890]" />
+                <span className="truncate max-w-[160px] sm:max-w-xs">
+                  {selectedStore.name || "SmartCart Supermarket"}
+                </span>
+                <span>•</span>
+                <span className="font-bold text-[#102B35]">
+                  {session.cartTag || "SmartCart #18"}
+                </span>
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-1 rounded-full">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>256-Bit SSL</span>
-        </div>
-      </header>
+          <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>256-Bit SSL</span>
+          </div>
+        </header>
+      )}
 
-      {/* 4-Step Progress Indicator */}
-      <CheckoutStepper currentStep={step} />
+      {/* Stepper (Only on Steps 1, 2, 3) */}
+      {step !== "confirmation" && (
+        <CheckoutStepper currentStep={step} />
+      )}
 
       {/* Step Content */}
-      <main className="transition-all duration-200">
+      <div className="transition-all duration-200">
         {step === "review" && (
           <OrderReviewStep
             bill={currentBill}
@@ -235,7 +244,7 @@ export default function CheckoutPage() {
         {step === "processing" && (
           <PaymentProcessingStep
             bill={currentBill}
-            method={selectedMethod || "upi"}
+            method={selectedMethod || "wallet_gpay"}
           />
         )}
 
@@ -245,7 +254,7 @@ export default function CheckoutPage() {
             onClearAndGoHome={handleClearAndGoHome}
           />
         )}
-      </main>
+      </div>
     </div>
   );
 }
