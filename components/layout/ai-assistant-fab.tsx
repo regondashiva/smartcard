@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useIsSplashActive } from "@/components/splash/splash-state";
 import { Sparkles, X } from "lucide-react";
 
 export function AIAssistantFAB() {
   const pathname = usePathname();
+  const isSplash = useIsSplashActive();
   const [dismissed, setDismissed] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -16,7 +18,7 @@ export function AIAssistantFAB() {
   }, [pathname]);
 
   // Don't render on the assistant page or splash screen
-  if (pathname === "/assistant" || pathname === "/splash") return null;
+  if (pathname === "/assistant" || pathname === "/splash" || isSplash) return null;
 
   return (
     <div

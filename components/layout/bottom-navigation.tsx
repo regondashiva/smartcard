@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/store/cart-store";
+import { useIsSplashActive } from "@/components/splash/splash-state";
 import {
   Home,
   Compass,
@@ -14,6 +15,7 @@ import {
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const isSplash = useIsSplashActive();
   const { getItemCount } = useCart();
   const itemCount = getItemCount();
 
@@ -22,7 +24,7 @@ export function BottomNavigation() {
   useEffect(() => { setMounted(true); }, []);
 
   // Do not render bottom navigation on splash screen
-  if (pathname === "/splash") return null;
+  if (pathname === "/splash" || isSplash) return null;
 
   const navItems = [
     {

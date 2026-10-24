@@ -68,12 +68,18 @@ export default function OnboardingPage() {
       {/* Top Brand Bar with Guest Skip */}
       <div className="flex items-center justify-between pb-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#17A890] to-[#25d3b6] flex items-center justify-center shadow-md">
-            <ShoppingCart className="w-4 h-4 text-[#102B35]" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#17A890] to-[#25d3b6] flex items-center justify-center shadow-md overflow-hidden">
+            <Image
+              src="/images/smartcart-icon.png"
+              alt="SmartCart AI"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
           </div>
           <div>
             <span className="font-extrabold text-sm tracking-tight text-[#102B35]">
-              SmartCart <span className="text-[#17A890]">AI</span>
+              SmartCart <span className="text-[#17A890]">AI✦</span>
             </span>
           </div>
         </div>

@@ -41,3 +41,14 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Android & Capacitor
+*.apk
+*.aab
+/android/local.properties
+/android/.gradle/
+/android/app/build/
+/android/build/
+/android/captures/
+.gradle/
+

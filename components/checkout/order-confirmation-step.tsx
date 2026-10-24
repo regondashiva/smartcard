@@ -1,219 +1,285 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { OrderConfirmation } from "@/types/checkout";
 import { formatCurrency } from "@/lib/utils";
 import { paiseToRupees } from "@/lib/checkout-service";
+import { getOrderById } from "@/lib/receipt-service";
+import { downloadReceiptPdf } from "@/lib/receipt-pdf";
 import {
-  CheckCircle2,
-  Receipt,
-  Home,
+  Check,
   ShoppingBag,
+  Calendar,
+  FileText,
+  Download,
   Share2,
-  Copy,
+  Mail,
+  QrCode,
+  ChevronRight,
+  Home,
+  CheckCircle2,
 } from "lucide-react";
-
-// ─── QR Code (CSS-only simplified receipt QR) ─────────────────────────────────
-// In production use a real QR library. This renders the receipt data as a
-// scannable-looking visual without any external dependency.
-
-function ReceiptQr({ data, exitCode }: { data: string; exitCode: string }) {
-  return (
-    <div className="flex flex-col items-center gap-3">
-      {/* Exit gate badge */}
-      <div className="bg-[#102B35] text-white rounded-2xl px-6 py-3 text-center">
-        <p className="text-[10px] font-semibold text-white/60 uppercase tracking-wider">
-          Exit Gate Code
-        </p>
-        <p className="text-3xl font-black tracking-[0.3em] mt-0.5">{exitCode}</p>
-        <p className="text-[10px] text-white/60 mt-1">
-          Show this code at the exit scanner
-        </p>
-      </div>
-
-      {/* QR placeholder — real QR lib would go here */}
-      <div className="w-40 h-40 bg-white border-2 border-[#E5EBE8] rounded-2xl p-3 relative overflow-hidden">
-        {/* Simulated QR pattern using CSS grid */}
-        <div
-          className="w-full h-full"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='134' height='134'%3E%3Crect width='134' height='134' fill='white'/%3E%3Crect x='0' y='0' width='40' height='40' fill='%23102B35'/%3E%3Crect x='4' y='4' width='32' height='32' fill='white'/%3E%3Crect x='8' y='8' width='24' height='24' fill='%23102B35'/%3E%3Crect x='94' y='0' width='40' height='40' fill='%23102B35'/%3E%3Crect x='98' y='4' width='32' height='32' fill='white'/%3E%3Crect x='102' y='8' width='24' height='24' fill='%23102B35'/%3E%3Crect x='0' y='94' width='40' height='40' fill='%23102B35'/%3E%3Crect x='4' y='98' width='32' height='32' fill='white'/%3E%3Crect x='8' y='102' width='24' height='24' fill='%23102B35'/%3E%3Crect x='48' y='4' width='8' height='8' fill='%23102B35'/%3E%3Crect x='60' y='4' width='8' height='8' fill='%23102B35'/%3E%3Crect x='72' y='4' width='8' height='8' fill='%23102B35'/%3E%3Crect x='80' y='4' width='8' height='8' fill='%23102B35'/%3E%3Crect x='48' y='16' width='8' height='8' fill='%23102B35'/%3E%3Crect x='60' y='16' width='8' height='8' fill='%23102B35'/%3E%3Crect x='72' y='20' width='8' height='8' fill='%23102B35'/%3E%3Crect x='48' y='28' width='16' height='8' fill='%23102B35'/%3E%3Crect x='70' y='28' width='20' height='8' fill='%23102B35'/%3E%3Crect x='4' y='48' width='8' height='8' fill='%23102B35'/%3E%3Crect x='16' y='48' width='8' height='8' fill='%23102B35'/%3E%3Crect x='28' y='48' width='8' height='8' fill='%23102B35'/%3E%3Crect x='48' y='48' width='16' height='8' fill='%23102B35'/%3E%3Crect x='68' y='48' width='8' height='8' fill='%23102B35'/%3E%3Crect x='80' y='48' width='8' height='8' fill='%23102B35'/%3E%3Crect x='94' y='48' width='8' height='8' fill='%23102B35'/%3E%3Crect x='110' y='48' width='8' height='8' fill='%23102B35'/%3E%3Crect x='122' y='48' width='8' height='8' fill='%23102B35'/%3E%3Crect x='4' y='60' width='8' height='8' fill='%23102B35'/%3E%3Crect x='20' y='60' width='8' height='8' fill='%23102B35'/%3E%3Crect x='48' y='60' width='8' height='8' fill='%23102B35'/%3E%3Crect x='62' y='60' width='16' height='8' fill='%23102B35'/%3E%3Crect x='80' y='60' width='16' height='8' fill='%23102B35'/%3E%3Crect x='100' y='60' width='8' height='8' fill='%23102B35'/%3E%3Crect x='120' y='60' width='12' height='8' fill='%23102B35'/%3E%3Crect x='4' y='72' width='8' height='8' fill='%23102B35'/%3E%3Crect x='14' y='72' width='20' height='8' fill='%23102B35'/%3E%3Crect x='48' y='72' width='8' height='8' fill='%23102B35'/%3E%3Crect x='60' y='72' width='8' height='8' fill='%23102B35'/%3E%3Crect x='72' y='72' width='8' height='8' fill='%23102B35'/%3E%3Crect x='96' y='72' width='20' height='8' fill='%23102B35'/%3E%3Crect x='122' y='72' width='8' height='8' fill='%23102B35'/%3E%3Crect x='48' y='84' width='8' height='8' fill='%23102B35'/%3E%3Crect x='62' y='84' width='16' height='8' fill='%23102B35'/%3E%3Crect x='82' y='84' width='8' height='8' fill='%23102B35'/%3E%3Crect x='96' y='84' width='8' height='8' fill='%23102B35'/%3E%3Crect x='108' y='84' width='8' height='8' fill='%23102B35'/%3E%3Crect x='120' y='84' width='8' height='8' fill='%23102B35'/%3E%3Crect x='48' y='96' width='20' height='8' fill='%23102B35'/%3E%3Crect x='74' y='96' width='8' height='8' fill='%23102B35'/%3E%3Crect x='48' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='62' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='72' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='84' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='96' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='112' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='48' y='122' width='8' height='8' fill='%23102B35'/%3E%3Crect x='60' y='122' width='20' height='8' fill='%23102B35'/%3E%3Crect x='84' y='122' width='8' height='8' fill='%23102B35'/%3E%3Crect x='96' y='96' width='8' height='8' fill='%23102B35'/%3E%3Crect x='106' y='96' width='8' height='8' fill='%23102B35'/%3E%3Crect x='120' y='96' width='12' height='8' fill='%23102B35'/%3E%3Crect x='96' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='110' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='126' y='108' width='8' height='8' fill='%23102B35'/%3E%3Crect x='96' y='120' width='12' height='8' fill='%23102B35'/%3E%3Crect x='116' y='120' width='8' height='8' fill='%23102B35'/%3E%3C/svg%3E")`,
-            backgroundSize: "contain",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-          }}
-          aria-label="Receipt QR Code"
-        />
-      </div>
-      <p className="text-[10px] text-[#718096] text-center">
-        Scan at store exit gate or show exit code above
-      </p>
-    </div>
-  );
-}
-
-// ─── Copy helper ─────────────────────────────────────────────────────────────
-
-function useCopy() {
-  const [copied, setCopied] = React.useState(false);
-  const copy = (text: string) => {
-    navigator.clipboard.writeText(text).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-  return { copied, copy };
-}
-
-// ─── Main component ───────────────────────────────────────────────────────────
 
 interface OrderConfirmationStepProps {
   confirmation: OrderConfirmation;
   onClearAndGoHome: () => void;
 }
 
-const METHOD_LABEL: Record<string, string> = {
-  upi: "UPI",
-  card: "Debit / Credit Card",
-  netbanking: "Net Banking",
-  wallet_gpay: "Google Pay",
-  wallet_phonepe: "PhonePe",
-  wallet_paytm: "Paytm",
-};
-
 export function OrderConfirmationStep({
   confirmation,
   onClearAndGoHome,
 }: OrderConfirmationStepProps) {
-  const { copied, copy } = useCopy();
+  const [downloading, setDownloading] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
-  const formattedDate = new Date(confirmation.paidAt).toLocaleString("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const formattedDate = new Date(confirmation.paidAt).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   });
 
+  const formattedTime = new Date(confirmation.paidAt).toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  const handleDownloadPdf = async () => {
+    setDownloading(true);
+    try {
+      const receipt = getOrderById(confirmation.orderId);
+      if (receipt) {
+        await downloadReceiptPdf(receipt);
+        showToast("PDF Receipt downloaded");
+      } else {
+        window.print();
+      }
+    } catch {
+      window.print();
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handleShare = async () => {
+    const text = `SmartCart AI · Order ${confirmation.orderId} · Total: ${formatCurrency(
+      paiseToRupees(confirmation.amountPaid)
+    )} · Exit Code: ${confirmation.exitCode}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `SmartCart Receipt - ${confirmation.orderId}`,
+          text,
+          url: `${window.location.origin}/receipts/${confirmation.orderId}`,
+        });
+        return;
+      } catch {
+        // Fallback
+      }
+    }
+
+    navigator.clipboard.writeText(text).catch(() => {});
+    showToast("Receipt copied to clipboard");
+  };
+
+  const totalItems = confirmation.items.reduce((acc, i) => acc + i.quantity, 0);
+
   return (
-    <div className="space-y-4">
-      {/* Success header */}
-      <div className="bg-white rounded-3xl border border-[#E5EBE8] shadow-xs px-6 py-8 flex flex-col items-center gap-4 text-center">
-        {/* Success icon with ring */}
-        <div className="relative">
-          <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
-            <CheckCircle2 className="w-10 h-10 text-emerald-600 stroke-[1.5]" />
-          </div>
-          <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#17A890] flex items-center justify-center border-2 border-white">
-            <span className="text-white text-[9px] font-black">✓</span>
-          </div>
+    <div className="w-full max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-[#E5EBE8] relative">
+      {/* Toast Alert */}
+      {toast && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-[#102B35] text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg flex items-center gap-1.5">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{toast}</span>
+        </div>
+      )}
+
+      {/* Top Header - Deep Teal Gradient */}
+      <div className="relative bg-gradient-to-b from-[#063831] via-[#09473F] to-[#0A4D45] text-white px-5 pt-8 pb-10 overflow-hidden">
+        {/* Subtle Confetti Particles */}
+        <div className="absolute inset-0 pointer-events-none opacity-40">
+          <span className="absolute top-4 left-10 w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+          <span className="absolute top-10 left-24 w-1 h-2 rounded bg-amber-300 rotate-45" />
+          <span className="absolute top-6 right-14 w-1.5 h-1.5 rounded-full bg-teal-200" />
+          <span className="absolute top-18 right-8 w-2 h-1 rounded bg-emerald-400 -rotate-12" />
         </div>
 
-        <div>
-          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-            Payment Successful
-          </span>
-          <h2 className="text-xl font-black text-[#102B35] mt-2">
-            {formatCurrency(paiseToRupees(confirmation.amountPaid))}
-          </h2>
-          <p className="text-xs text-[#718096] mt-0.5">
-            Paid via {METHOD_LABEL[confirmation.paymentMethod]} · {formattedDate}
-          </p>
+        {/* Header Action Bar */}
+        <div className="relative flex items-center justify-between z-10">
+          <button
+            type="button"
+            onClick={onClearAndGoHome}
+            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors cursor-pointer"
+            aria-label="Home"
+          >
+            <Home className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={onClearAndGoHome}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/15 text-white text-xs font-semibold transition-colors cursor-pointer"
+          >
+            <Home className="w-3.5 h-3.5" />
+            <span>Home</span>
+          </button>
+        </div>
+
+        {/* Center Success Badge */}
+        <div className="relative z-10 flex flex-col items-center text-center mt-4 space-y-3">
+          <div className="w-20 h-20 rounded-full bg-[#10B981] flex items-center justify-center shadow-lg ring-6 ring-emerald-400/25">
+            <Check className="w-10 h-10 text-white stroke-[3.5]" />
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-black tracking-tight text-white">
+              Payment Successful!
+            </h2>
+            <p className="text-xs text-white/80 mt-1 leading-relaxed max-w-xs mx-auto">
+              Thank you for shopping with SmartCart AI
+              <br />
+              Your order has been placed successfully.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Exit QR */}
-      <div className="bg-white rounded-3xl border border-[#E5EBE8] shadow-xs px-5 py-6 flex flex-col items-center gap-4">
-        <div className="flex items-center gap-2">
-          <Receipt className="w-4 h-4 text-[#17A890]" />
-          <h3 className="text-xs font-bold text-[#102B35] uppercase tracking-wider">
-            Exit Receipt &amp; QR
-          </h3>
+      {/* White Overlapping Content Card */}
+      <div className="bg-white -mt-5 rounded-t-3xl px-5 pt-5 pb-8 space-y-4 z-20 relative">
+        {/* Store Card */}
+        <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F8FAF9] border border-[#E9EFEA]">
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-[#DCE7E1] bg-white">
+            <Image
+              src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=200&q=80"
+              alt={confirmation.storeName}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-sm font-bold text-[#102B35] truncate">
+              {confirmation.storeName || "Green Valley Supermarket"}
+            </h3>
+            <p className="text-[11px] text-[#718096] truncate">
+              Indiranagar, Bengaluru · Cart #{confirmation.cartTag || "12"}
+            </p>
+          </div>
         </div>
-        <ReceiptQr data={confirmation.receiptQrData} exitCode={confirmation.exitCode} />
-      </div>
 
-      {/* Transaction details */}
-      <div className="bg-white rounded-3xl border border-[#E5EBE8] shadow-xs p-5 space-y-3">
-        <h3 className="text-xs font-bold text-[#102B35] uppercase tracking-wider border-b border-[#E5EBE8] pb-2">
-          Transaction Details
-        </h3>
-        {[
-          { label: "Order ID", value: confirmation.orderId },
-          { label: "Transaction ID", value: confirmation.transactionId },
-          { label: "Store", value: confirmation.storeName },
-          { label: "Cart", value: confirmation.cartTag },
-          { label: "Items", value: `${confirmation.items.length} product${confirmation.items.length !== 1 ? "s" : ""}` },
-          { label: "Total Units", value: String(confirmation.items.reduce((a, i) => a + i.quantity, 0)) },
-        ].map(({ label, value }) => (
-          <div key={label} className="flex items-start justify-between gap-3">
-            <span className="text-[11px] text-[#718096] shrink-0">{label}</span>
-            <span className="text-[11px] font-semibold text-[#18252B] text-right font-mono break-all">
-              {value}
+        {/* 3 Summary Badges */}
+        <div className="grid grid-cols-3 gap-2.5">
+          {/* Date */}
+          <div className="bg-[#F8FAF9] border border-[#E9EFEA] rounded-2xl p-3 flex flex-col items-center text-center">
+            <div className="w-7 h-7 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-center text-[#0B443B] mb-2 shadow-2xs">
+              <Calendar className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[11px] font-bold text-[#102B35] leading-tight">
+              {formattedDate}
+            </span>
+            <span className="text-[10px] text-[#718096] mt-0.5">{formattedTime}</span>
+          </div>
+
+          {/* Receipt No */}
+          <div className="bg-[#F8FAF9] border border-[#E9EFEA] rounded-2xl p-3 flex flex-col items-center text-center">
+            <div className="w-7 h-7 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-center text-[#0B443B] mb-2 shadow-2xs">
+              <FileText className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[10px] text-[#718096] uppercase font-semibold">
+              Receipt No.
+            </span>
+            <span className="text-[11px] font-bold text-[#102B35] truncate max-w-full mt-0.5 font-mono">
+              {confirmation.orderId.substring(0, 10)}
             </span>
           </div>
-        ))}
 
-        {/* Copy txn button */}
-        <button
-          type="button"
-          onClick={() => copy(confirmation.transactionId)}
-          className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-[#E5EBE8] text-[11px] font-semibold text-[#718096] hover:bg-[#F7F9F8] transition-colors cursor-pointer"
-        >
-          <Copy className="w-3.5 h-3.5" />
-          {copied ? "Copied!" : "Copy Transaction ID"}
-        </button>
-      </div>
+          {/* Items & Total */}
+          <div className="bg-[#F8FAF9] border border-[#E9EFEA] rounded-2xl p-3 flex flex-col items-center text-center">
+            <div className="w-7 h-7 rounded-lg bg-white border border-[#E2E8F0] flex items-center justify-center text-[#0B443B] mb-2 shadow-2xs">
+              <ShoppingBag className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[11px] font-bold text-[#102B35] leading-tight">
+              {totalItems} items
+            </span>
+            <span className="text-[11px] font-bold text-[#0B443B] mt-0.5">
+              {formatCurrency(paiseToRupees(confirmation.amountPaid))}
+            </span>
+          </div>
+        </div>
 
-      {/* Primary Module 8 Exit Pass and Digital Receipt Actions */}
-      <div className="space-y-2">
+        {/* View Receipt Primary Button */}
         <Link
-          href={`/orders/${confirmation.orderId}/exit-pass`}
-          className="w-full py-3.5 px-4 rounded-xl font-bold text-xs bg-[#17A890] hover:bg-[#128673] text-white flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.99] text-center"
+          href={`/receipts/${confirmation.orderId}?screen=receipt`}
+          className="w-full py-4 px-5 rounded-2xl bg-[#0B443B] hover:bg-[#07362E] text-white flex items-center justify-between font-bold text-sm shadow-md transition-all active:scale-[0.99] text-center"
         >
-          <Receipt className="w-4 h-4" />
-          <span>Open Exit Pass &amp; Gate QR</span>
+          <div className="flex items-center gap-2.5">
+            <ShoppingBag className="w-4 h-4 text-emerald-300" />
+            <span>View Receipt</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-white/80" />
         </Link>
 
+        {/* 3 Secondary Action Buttons */}
+        <div className="grid grid-cols-3 gap-2.5">
+          <button
+            type="button"
+            onClick={handleDownloadPdf}
+            disabled={downloading}
+            className="py-3 px-2 rounded-2xl bg-[#F8FAF9] hover:bg-[#EFF4F1] border border-[#E2EBE6] flex flex-col items-center justify-center gap-1.5 text-center text-[#102B35] transition-colors cursor-pointer"
+          >
+            {downloading ? (
+              <div className="w-4 h-4 border-2 border-[#0B443B] border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 text-[#0B443B]" />
+            )}
+            <span className="text-[11px] font-bold">Download PDF</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleShare}
+            className="py-3 px-2 rounded-2xl bg-[#F8FAF9] hover:bg-[#EFF4F1] border border-[#E2EBE6] flex flex-col items-center justify-center gap-1.5 text-center text-[#102B35] transition-colors cursor-pointer"
+          >
+            <Share2 className="w-4 h-4 text-[#0B443B]" />
+            <span className="text-[11px] font-bold">Share</span>
+          </button>
+
+          <Link
+            href={`/receipts/${confirmation.orderId}?screen=success`}
+            className="py-3 px-2 rounded-2xl bg-[#F8FAF9] hover:bg-[#EFF4F1] border border-[#E2EBE6] flex flex-col items-center justify-center gap-1.5 text-center text-[#102B35] transition-colors cursor-pointer"
+          >
+            <Mail className="w-4 h-4 text-[#0B443B]" />
+            <span className="text-[11px] font-bold">Email Receipt</span>
+          </Link>
+        </div>
+
+        {/* Ready to Exit Mint Banner */}
         <Link
-          href={`/receipts/${confirmation.orderId}`}
-          className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-white border border-[#E5EBE8] text-[#102B35] hover:bg-[#F7F9F8] flex items-center justify-center gap-2 transition-all text-center shadow-2xs"
+          href={`/receipts/${confirmation.orderId}?screen=details`}
+          className="p-3.5 rounded-2xl bg-[#EBF8F4] hover:bg-[#DDF3EC] border border-[#C6ECE0] flex items-center justify-between transition-colors shadow-2xs block"
         >
-          <Receipt className="w-4 h-4 text-[#17A890]" />
-          <span>View Digital Tax Receipt</span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#D4F3E8] border border-[#BCEBDC] flex items-center justify-center text-[#083D35] shrink-0">
+              <QrCode className="w-5 h-5 text-[#0B443B]" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#083D35]">Ready to Exit?</p>
+              <p className="text-[10px] text-[#4A726B] leading-tight">
+                Show your exit QR code at the exit gate.
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#083D35] shrink-0" />
         </Link>
       </div>
-
-      {/* Action buttons */}
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          type="button"
-          onClick={() =>
-            navigator.share?.({
-              title: "SmartCart Receipt",
-              text: `Order ${confirmation.orderId} · ${formatCurrency(paiseToRupees(confirmation.amountPaid))} · ${confirmation.storeName}`,
-            }).catch(() => {})
-          }
-          className="flex items-center justify-center gap-2 py-3 rounded-xl border border-[#E5EBE8] bg-white text-xs font-bold text-[#102B35] hover:bg-[#F7F9F8] transition-colors cursor-pointer shadow-xs"
-        >
-          <Share2 className="w-4 h-4" />
-          Share Receipt
-        </button>
-        <Link
-          href="/explore"
-          className="flex items-center justify-center gap-2 py-3 rounded-xl border border-[#E5EBE8] bg-white text-xs font-bold text-[#102B35] hover:bg-[#F7F9F8] transition-colors shadow-xs"
-        >
-          <ShoppingBag className="w-4 h-4" />
-          Shop Again
-        </Link>
-      </div>
-
-      {/* Go home (clears cart) */}
-      <button
-        type="button"
-        onClick={onClearAndGoHome}
-        className="w-full py-3.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-[#102B35] hover:bg-[#0B1D24] text-white shadow-md transition-all active:scale-[0.99] cursor-pointer"
-      >
-        <Home className="w-4 h-4" />
-        Back to Home
-      </button>
     </div>
   );
 }

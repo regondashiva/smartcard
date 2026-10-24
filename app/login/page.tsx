@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/store/auth-store";
 import { useCart } from "@/store/cart-store";
@@ -88,8 +89,14 @@ export default function LoginPage() {
     <div className="max-w-md mx-auto py-2 space-y-5">
       {/* Brand Header */}
       <div className="text-center space-y-1">
-        <div className="w-12 h-12 rounded-2xl bg-[#17A890]/15 text-[#17A890] flex items-center justify-center mx-auto mb-2 border border-[#17A890]/30 shadow-xs">
-          <ShoppingCart className="w-6 h-6" />
+        <div className="w-14 h-14 rounded-2xl bg-[#17A890]/15 flex items-center justify-center mx-auto mb-2 border border-[#17A890]/30 shadow-xs overflow-hidden">
+          <Image
+            src="/images/smartcart-icon.png"
+            alt="SmartCart AI"
+            width={48}
+            height={48}
+            className="object-contain"
+          />
         </div>
         <h1 className="text-xl font-black text-[#102B35] tracking-tight">
           Welcome to SmartCart AI
