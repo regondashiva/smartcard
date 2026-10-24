@@ -23,12 +23,13 @@ export function BottomNavigation() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  // Do not render bottom navigation on splash screen, checkout, or receipts
+  // Do not render bottom navigation on splash screen, checkout, receipts, or assistant chat
   if (
     pathname === "/splash" ||
     isSplash ||
     pathname.startsWith("/checkout") ||
-    pathname.startsWith("/receipts")
+    pathname.startsWith("/receipts") ||
+    pathname === "/assistant"
   ) {
     return null;
   }
