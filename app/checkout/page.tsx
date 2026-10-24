@@ -30,7 +30,6 @@ import {
   ShoppingBag,
   ArrowLeft,
   Store,
-  ChevronLeft,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -136,6 +135,21 @@ export default function CheckoutPage() {
     );
   }
 
+  // Final Confirmation: FULL COVER EDGE-TO-EDGE EXPERIENCE
+  if (step === "confirmation" && confirmation) {
+    return (
+      <div
+        className="-mx-4 -mt-3 min-h-screen"
+        style={{ marginBottom: "calc(-5rem - env(safe-area-inset-bottom, 16px))" }}
+      >
+        <OrderConfirmationStep
+          confirmation={confirmation}
+          onClearAndGoHome={handleClearAndGoHome}
+        />
+      </div>
+    );
+  }
+
   // If cart is empty and not on confirmation
   if (items.length === 0 && !confirmation && step !== "confirmation") {
     return (
@@ -168,59 +182,55 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="w-full space-y-4">
-      {/* Dedicated Checkout Header (Hidden on final confirmation for full-view ticket layout) */}
-      {step !== "confirmation" && (
-        <header className="sticky top-0 z-30 bg-[#F8FAF9]/95 backdrop-blur-md pt-1 pb-2 flex items-center justify-between border-b border-[#E2EBE6]">
-          <div className="flex items-center gap-2.5">
-            {step === "payment" ? (
-              <button
-                type="button"
-                onClick={() => setStep("review")}
-                className="w-9 h-9 rounded-2xl bg-white border border-[#DCE4E0] flex items-center justify-center text-[#102B35] hover:bg-[#F0F4F2] transition-colors cursor-pointer shadow-2xs"
-                aria-label="Back to order review"
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </button>
-            ) : step === "review" ? (
-              <Link
-                href="/cart"
-                className="w-9 h-9 rounded-2xl bg-white border border-[#DCE4E0] flex items-center justify-center text-[#102B35] hover:bg-[#F0F4F2] transition-colors shadow-2xs"
-                aria-label="Back to cart"
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Link>
-            ) : null}
+    <div className="w-full space-y-4 pb-20">
+      {/* Full-Bleed Sticky Checkout Header */}
+      <header className="-mx-4 -mt-3 px-4 py-3 sticky top-0 z-30 bg-white/95 backdrop-blur-md flex items-center justify-between border-b border-[#E2EBE6] shadow-2xs">
+        <div className="flex items-center gap-2.5">
+          {step === "payment" ? (
+            <button
+              type="button"
+              onClick={() => setStep("review")}
+              className="w-9 h-9 rounded-2xl bg-[#F8FAF9] border border-[#DCE4E0] flex items-center justify-center text-[#102B35] hover:bg-[#F0F4F2] transition-colors cursor-pointer shadow-2xs"
+              aria-label="Back to order review"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          ) : step === "review" ? (
+            <Link
+              href="/cart"
+              className="w-9 h-9 rounded-2xl bg-[#F8FAF9] border border-[#DCE4E0] flex items-center justify-center text-[#102B35] hover:bg-[#F0F4F2] transition-colors shadow-2xs"
+              aria-label="Back to cart"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Link>
+          ) : null}
 
-            <div>
-              <h1 className="text-sm font-black text-[#102B35] flex items-center gap-1.5 leading-tight">
-                <span>Self-Checkout</span>
-                <Lock className="w-3.5 h-3.5 text-[#17A890]" />
-              </h1>
-              <p className="text-[10px] text-[#718096] flex items-center gap-1 font-medium mt-0.5">
-                <Store className="w-3 h-3 text-[#17A890]" />
-                <span className="truncate max-w-[160px] sm:max-w-xs">
-                  {selectedStore.name || "SmartCart Supermarket"}
-                </span>
-                <span>•</span>
-                <span className="font-bold text-[#102B35]">
-                  {session.cartTag || "SmartCart #18"}
-                </span>
-              </p>
-            </div>
+          <div>
+            <h1 className="text-sm font-black text-[#102B35] flex items-center gap-1.5 leading-tight">
+              <span>Self-Checkout</span>
+              <Lock className="w-3.5 h-3.5 text-[#17A890]" />
+            </h1>
+            <p className="text-[10px] text-[#718096] flex items-center gap-1 font-medium mt-0.5">
+              <Store className="w-3 h-3 text-[#17A890]" />
+              <span className="truncate max-w-[160px] sm:max-w-xs">
+                {selectedStore.name || "SmartCart Supermarket"}
+              </span>
+              <span>•</span>
+              <span className="font-bold text-[#102B35]">
+                {session.cartTag || "SmartCart #18"}
+              </span>
+            </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-2xs">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>256-Bit SSL</span>
-          </div>
-        </header>
-      )}
+        <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-2xs">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <span>256-Bit SSL</span>
+        </div>
+      </header>
 
-      {/* Stepper (Only on Steps 1, 2, 3) */}
-      {step !== "confirmation" && (
-        <CheckoutStepper currentStep={step} />
-      )}
+      {/* Stepper (Steps 1, 2, 3) */}
+      <CheckoutStepper currentStep={step} />
 
       {/* Step Content */}
       <div className="transition-all duration-200">
@@ -245,13 +255,6 @@ export default function CheckoutPage() {
           <PaymentProcessingStep
             bill={currentBill}
             method={selectedMethod || "wallet_gpay"}
-          />
-        )}
-
-        {step === "confirmation" && confirmation && (
-          <OrderConfirmationStep
-            confirmation={confirmation}
-            onClearAndGoHome={handleClearAndGoHome}
           />
         )}
       </div>

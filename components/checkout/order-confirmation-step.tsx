@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import QRCode from "qrcode";
 import { OrderConfirmation } from "@/types/checkout";
 import { formatCurrency } from "@/lib/utils";
@@ -12,20 +11,17 @@ import { downloadReceiptPdf } from "@/lib/receipt-pdf";
 import {
   Check,
   ShoppingBag,
-  Calendar,
-  FileText,
   Download,
   Share2,
-  Mail,
   QrCode,
   ChevronRight,
   Home,
   CheckCircle2,
   Copy,
-  Sparkles,
   Store,
   Clock,
-  ArrowRight,
+  Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 
 interface OrderConfirmationStepProps {
@@ -41,10 +37,26 @@ export function OrderConfirmationStep({
   const [toast, setToast] = useState<string | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const [copiedOrderId, setCopiedOrderId] = useState(false);
+  const [copiedPasscode, setCopiedPasscode] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(900); // 15 minutes in seconds
 
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
+  };
+
+  // Real-time 15 min countdown
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatCountdown = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
   useEffect(() => {
@@ -53,13 +65,14 @@ export function OrderConfirmationStep({
       exitCode: confirmation.exitCode,
       amount: confirmation.amountPaid,
       store: confirmation.storeName,
+      timestamp: confirmation.paidAt,
     });
 
     QRCode.toDataURL(qrPayload, {
-      width: 200,
+      width: 240,
       margin: 1,
       color: {
-        dark: "#102B35",
+        dark: "#083D33",
         light: "#FFFFFF",
       },
     })
@@ -109,15 +122,22 @@ export function OrderConfirmationStep({
     setTimeout(() => setCopiedOrderId(false), 2000);
   };
 
+  const handleCopyPasscode = () => {
+    navigator.clipboard.writeText(confirmation.exitCode || "SC-9821").catch(() => {});
+    setCopiedPasscode(true);
+    showToast("Exit passcode copied");
+    setTimeout(() => setCopiedPasscode(false), 2000);
+  };
+
   const handleShare = async () => {
     const text = `SmartCart AI · Order ${confirmation.orderId} · Total: ${formatCurrency(
       paiseToRupees(confirmation.amountPaid)
-    )} · Exit Code: ${confirmation.exitCode}`;
+    )} · Exit Passcode: ${confirmation.exitCode}`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `SmartCart Receipt - ${confirmation.orderId}`,
+          title: `SmartCart Exit Pass - ${confirmation.orderId}`,
           text,
           url: `${window.location.origin}/receipts/${confirmation.orderId}`,
         });
@@ -128,7 +148,7 @@ export function OrderConfirmationStep({
     }
 
     navigator.clipboard.writeText(text).catch(() => {});
-    showToast("Receipt copied to clipboard");
+    showToast("Pass copied to clipboard");
   };
 
   const totalItems = confirmation.items.reduce(
@@ -137,87 +157,90 @@ export function OrderConfirmationStep({
   );
 
   return (
-    <div className="w-full max-w-lg mx-auto space-y-4 pb-12">
+    <div className="w-full min-h-screen bg-[#07362E] flex flex-col justify-between relative selection:bg-emerald-400 selection:text-emerald-950">
       {/* Toast Alert */}
       {toast && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#102B35] text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-[#102B35] text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl flex items-center gap-1.5 animate-in fade-in slide-in-from-top-3">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>{toast}</span>
         </div>
       )}
 
-      {/* Main Success Hero Card */}
-      <div className="bg-white rounded-3xl border border-[#E2EBE6] shadow-sm overflow-hidden">
-        {/* Top Header - Deep Teal Brand Gradient */}
-        <div className="relative bg-gradient-to-b from-[#0A3D35] via-[#0F4E44] to-[#12584E] text-white px-5 pt-6 pb-8 text-center overflow-hidden">
-          {/* Confetti Particles */}
-          <div className="absolute inset-0 pointer-events-none opacity-40">
-            <span className="absolute top-3 left-8 w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-            <span className="absolute top-8 left-20 w-1.5 h-2.5 rounded bg-amber-300 rotate-45" />
-            <span className="absolute top-4 right-12 w-2 h-2 rounded-full bg-teal-200" />
-            <span className="absolute top-14 right-6 w-2 h-1 rounded bg-emerald-400 -rotate-12" />
-          </div>
+      {/* ─── FULL COVER HERO CANOPY (Edge-to-Edge) ─── */}
+      <div className="relative bg-gradient-to-b from-[#042821] via-[#073A31] to-[#0A4D42] text-white px-5 pt-5 pb-10 overflow-hidden">
+        {/* Subtle Ambient Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Navigation Bar */}
-          <div className="relative z-10 flex items-center justify-between mb-4">
-            <button
-              type="button"
-              onClick={onClearAndGoHome}
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors cursor-pointer"
-              aria-label="Return to Home"
-            >
-              <Home className="w-4 h-4" />
-            </button>
+        {/* Top App Bar */}
+        <div className="relative z-10 flex items-center justify-between mb-5">
+          <button
+            type="button"
+            onClick={onClearAndGoHome}
+            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md flex items-center justify-center text-white transition-all cursor-pointer shadow-xs border border-white/10"
+            aria-label="Return to Home"
+          >
+            <Home className="w-4 h-4" />
+          </button>
 
-            <span className="text-xs font-bold text-white/80 uppercase tracking-widest">
-              SmartCart AI Checkout
+          <div className="flex items-center gap-1.5 bg-black/20 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] font-bold text-white tracking-wide uppercase">
+              Order Verified
             </span>
-
-            <button
-              type="button"
-              onClick={handleShare}
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors cursor-pointer"
-              aria-label="Share Receipt"
-            >
-              <Share2 className="w-4 h-4" />
-            </button>
           </div>
 
-          {/* Center Checkmark */}
-          <div className="relative z-10 flex flex-col items-center">
-            <div className="w-18 h-18 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg ring-6 ring-emerald-400/25 mb-3">
-              <Check className="w-9 h-9 text-white stroke-[3.5]" />
-            </div>
-
-            <h1 className="text-2xl font-black tracking-tight text-white">
-              Payment Successful!
-            </h1>
-            <p className="text-xs text-emerald-100 mt-1 max-w-xs mx-auto">
-              Your self-checkout bill has been paid and verified.
-            </p>
-
-            <div className="mt-3 inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 text-xs font-bold text-white">
-              <span>Paid {formatCurrency(paiseToRupees(confirmation.amountPaid))}</span>
-              <span>•</span>
-              <span className="font-mono text-emerald-200">
-                {confirmation.orderId.substring(0, 10)}
-              </span>
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={handleShare}
+            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md flex items-center justify-center text-white transition-all cursor-pointer shadow-xs border border-white/10"
+            aria-label="Share Exit Pass"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Store & Metadata Bar */}
-        <div className="p-4 bg-[#F8FAF9] border-b border-[#E9EFEA] flex items-center justify-between gap-3">
+        {/* Celebratory Success Hero */}
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="relative mb-3.5">
+            <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-25" />
+            <div className="relative w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 to-[#17A890] flex items-center justify-center shadow-[0_0_32px_rgba(16,185,129,0.45)] ring-4 ring-white/20">
+              <Check className="w-10 h-10 text-white stroke-[3.5]" />
+            </div>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            Payment Successful!
+          </h1>
+          <p className="text-xs text-emerald-100/90 mt-1 max-w-xs leading-relaxed">
+            Your self-checkout bill is paid. Show the QR pass below at the store exit.
+          </p>
+
+          <div className="mt-3.5 inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-xs">
+            <span className="text-sm font-black text-white">
+              Paid {formatCurrency(paiseToRupees(confirmation.amountPaid))}
+            </span>
+            <span className="text-white/40">•</span>
+            <span className="text-xs font-mono font-bold text-emerald-200">
+              {confirmation.orderId.substring(0, 10)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── FULL-WIDTH TICKET SHEET (Flows smoothly from below) ─── */}
+      <div className="relative -mt-6 bg-white rounded-t-[32px] shadow-[0_-16px_36px_rgba(0,0,0,0.18)] px-5 pt-6 pb-12 flex-1 flex flex-col space-y-5">
+        {/* Store & Cart Info Strip */}
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#F0F4F2]">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-white border border-[#DCE4E0] flex items-center justify-center text-[#17A890] shrink-0 shadow-2xs">
-              <Store className="w-5 h-5 text-[#0F4E44]" />
+            <div className="w-10 h-10 rounded-2xl bg-[#F0FAF7] border border-emerald-100 flex items-center justify-center text-[#083D33] shrink-0">
+              <Store className="w-5 h-5 text-[#083D33]" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-[#102B35] truncate">
+              <h2 className="text-xs font-bold text-[#102B35] truncate">
                 {confirmation.storeName || "SmartCart Supermarket"}
-              </p>
-              <p className="text-[11px] text-[#718096] truncate">
-                {confirmation.cartTag || "SmartCart #18"} · {formattedDate}
+              </h2>
+              <p className="text-[11px] text-[#718096] truncate mt-0.5">
+                {confirmation.cartTag || "SmartCart #18"} · {formattedDate}, {formattedTime}
               </p>
             </div>
           </div>
@@ -225,134 +248,149 @@ export function OrderConfirmationStep({
           <button
             type="button"
             onClick={handleCopyOrderId}
-            className="flex items-center gap-1 text-[11px] font-bold text-[#17A890] hover:text-[#0F4E44] bg-white border border-[#DCE4E0] px-2.5 py-1.5 rounded-xl transition-colors shrink-0 cursor-pointer"
+            className="flex items-center gap-1 text-[11px] font-bold text-[#083D33] hover:text-[#042821] bg-[#F4F8F6] border border-[#E2EBE6] px-2.5 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 active:scale-95"
           >
-            <Copy className="w-3 h-3" />
+            <Copy className="w-3 h-3 text-[#17A890]" />
             <span>{copiedOrderId ? "Copied" : "Copy ID"}</span>
           </button>
         </div>
 
-        {/* Digital Exit Gate Pass (Smart Pass Style) */}
-        <div className="p-5 space-y-4">
-          <div className="rounded-2xl border-2 border-emerald-500/30 bg-gradient-to-b from-emerald-50/50 to-white p-4 text-center space-y-3 relative overflow-hidden">
-            <div className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-emerald-200">
-              <QrCode className="w-3 h-3" />
-              <span>Digital Store Exit Pass</span>
+        {/* ─── DIGITAL EXIT GATE PASS (Clean Airline/Event Pass Style) ─── */}
+        <div className="text-center space-y-3.5">
+          <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border border-emerald-200/80">
+            <QrCode className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Digital Store Exit Pass</span>
+          </div>
+
+          <p className="text-xs font-bold text-[#102B35]">
+            Scan this QR code at the automated exit turnstile
+          </p>
+
+          {/* Centered QR Frame with Scanning Brackets */}
+          <div className="flex justify-center my-2">
+            <div className="relative p-4 bg-white rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-[#E2EBE6]">
+              {/* Corner Accents */}
+              <div className="absolute top-2.5 left-2.5 w-4 h-4 border-t-2 border-l-2 border-[#17A890] rounded-tl-lg" />
+              <div className="absolute top-2.5 right-2.5 w-4 h-4 border-t-2 border-r-2 border-[#17A890] rounded-tr-lg" />
+              <div className="absolute bottom-2.5 left-2.5 w-4 h-4 border-b-2 border-l-2 border-[#17A890] rounded-bl-lg" />
+              <div className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-2 border-r-2 border-[#17A890] rounded-br-lg" />
+
+              {qrDataUrl ? (
+                <img
+                  src={qrDataUrl}
+                  alt="Exit QR Code"
+                  className="w-44 h-44 sm:w-48 sm:h-48 object-contain"
+                />
+              ) : (
+                <div className="w-44 h-44 bg-slate-50 flex items-center justify-center">
+                  <QrCode className="w-12 h-12 text-slate-300" />
+                </div>
+              )}
             </div>
+          </div>
 
-            <p className="text-xs font-bold text-[#102B35]">
-              Scan this QR Code at the SmartCart Exit Turnstile
-            </p>
-
-            {/* QR Code Container */}
-            <div className="flex justify-center">
-              <div className="p-2.5 bg-white rounded-2xl border-2 border-slate-100 shadow-md">
-                {qrDataUrl ? (
-                  <img
-                    src={qrDataUrl}
-                    alt="Exit QR Code"
-                    className="w-36 h-36 object-contain"
-                  />
-                ) : (
-                  <div className="w-36 h-36 bg-slate-50 flex items-center justify-center">
-                    <QrCode className="w-10 h-10 text-slate-300" />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Exit Passcode */}
-            <div className="bg-white rounded-xl border border-emerald-200 p-2.5 max-w-xs mx-auto flex items-center justify-between">
-              <span className="text-[11px] text-[#718096] font-semibold">
-                Exit Passcode:
-              </span>
+          {/* Passcode & 1-Tap Copy */}
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xs text-[#718096] font-semibold">
+              Exit Passcode:
+            </span>
+            <button
+              type="button"
+              onClick={handleCopyPasscode}
+              className="inline-flex items-center gap-1.5 bg-[#F4F8F6] hover:bg-[#E9F3EF] border border-[#DCE7E1] px-3 py-1 rounded-xl cursor-pointer active:scale-95 transition-all"
+            >
               <span className="text-base font-black tracking-widest text-[#102B35] font-mono">
                 {confirmation.exitCode || "SC-9821"}
               </span>
-            </div>
-
-            <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#5A736E] font-medium">
-              <Clock className="w-3.5 h-3.5 text-[#17A890]" />
-              <span>Gate pass active for 15 minutes</span>
-            </div>
+              <Copy className="w-3.5 h-3.5 text-[#17A890]" />
+            </button>
           </div>
 
-          {/* Quick Metrics (3 Cards) */}
-          <div className="grid grid-cols-3 gap-2.5">
-            <div className="bg-[#F8FAF9] border border-[#E9EFEA] rounded-2xl p-3 text-center">
-              <span className="text-[10px] text-[#718096] block uppercase font-semibold">
-                Items
-              </span>
-              <span className="text-xs font-bold text-[#102B35] mt-0.5 block">
-                {totalItems} {totalItems === 1 ? "unit" : "units"}
-              </span>
-            </div>
+          {/* Live Countdown Timer */}
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50/80 px-3 py-1 rounded-full border border-emerald-200/60">
+            <Clock className="w-3.5 h-3.5 text-emerald-600 animate-spin-slow" />
+            <span>Pass valid for {formatCountdown(timeLeft)} mins</span>
+          </div>
+        </div>
 
-            <div className="bg-[#F8FAF9] border border-[#E9EFEA] rounded-2xl p-3 text-center">
-              <span className="text-[10px] text-[#718096] block uppercase font-semibold">
-                Amount Paid
-              </span>
-              <span className="text-xs font-bold text-emerald-700 mt-0.5 block">
-                {formatCurrency(paiseToRupees(confirmation.amountPaid))}
-              </span>
-            </div>
-
-            <div className="bg-[#F8FAF9] border border-[#E9EFEA] rounded-2xl p-3 text-center">
-              <span className="text-[10px] text-[#718096] block uppercase font-semibold">
-                Status
-              </span>
-              <span className="text-xs font-bold text-emerald-600 mt-0.5 block">
-                Verified ✓
-              </span>
-            </div>
+        {/* ─── SUMMARY STATS (3 Segment Pills) ─── */}
+        <div className="grid grid-cols-3 gap-2.5 pt-1">
+          <div className="bg-[#FAFBFB] border border-[#E9EFEA] rounded-2xl p-3 text-center">
+            <span className="text-[10px] text-[#718096] uppercase font-bold tracking-wider block">
+              Cart Items
+            </span>
+            <span className="text-xs font-extrabold text-[#102B35] mt-0.5 block">
+              {totalItems} {totalItems === 1 ? "unit" : "units"}
+            </span>
           </div>
 
-          {/* Primary View Detailed Receipt Button */}
+          <div className="bg-[#FAFBFB] border border-[#E9EFEA] rounded-2xl p-3 text-center">
+            <span className="text-[10px] text-[#718096] uppercase font-bold tracking-wider block">
+              Total Paid
+            </span>
+            <span className="text-xs font-extrabold text-emerald-700 mt-0.5 block">
+              {formatCurrency(paiseToRupees(confirmation.amountPaid))}
+            </span>
+          </div>
+
+          <div className="bg-[#FAFBFB] border border-[#E9EFEA] rounded-2xl p-3 text-center">
+            <span className="text-[10px] text-[#718096] uppercase font-bold tracking-wider block">
+              Turnstile
+            </span>
+            <span className="text-xs font-extrabold text-emerald-600 mt-0.5 block flex items-center justify-center gap-0.5">
+              <Check className="w-3 h-3 stroke-[3]" /> Active
+            </span>
+          </div>
+        </div>
+
+        {/* ─── PRIMARY & SECONDARY ACTIONS ─── */}
+        <div className="space-y-2.5 pt-2">
+          {/* View Detailed Receipt */}
           <Link
             href={`/receipts/${confirmation.orderId}?screen=receipt`}
-            className="w-full py-4 px-5 rounded-2xl bg-[#0F4E44] hover:bg-[#0A3D35] text-white flex items-center justify-between font-bold text-sm shadow-md transition-all active:scale-[0.99]"
+            className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#083D33] to-[#0A4D42] hover:from-[#063028] hover:to-[#083D33] text-white flex items-center justify-between font-bold text-sm shadow-md transition-all active:scale-[0.99]"
           >
             <div className="flex items-center gap-2.5">
               <ShoppingBag className="w-4 h-4 text-emerald-300" />
-              <span>View Full Digital Receipt</span>
+              <span>View Full Tax Invoice &amp; Receipt</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-white/80" />
+            <ChevronRight className="w-4 h-4 text-white/70" />
           </Link>
 
-          {/* Secondary Action Grid */}
+          {/* Secondary Actions Row */}
           <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
               onClick={handleDownloadPdf}
               disabled={downloading}
-              className="py-3 px-3 rounded-2xl bg-[#F8FAF9] hover:bg-[#EFF4F1] border border-[#E2EBE6] flex items-center justify-center gap-2 text-xs font-bold text-[#102B35] transition-colors cursor-pointer"
+              className="py-3 px-3 rounded-2xl bg-[#F8FAF9] hover:bg-[#EFF5F2] border border-[#E2EBE6] flex items-center justify-center gap-2 text-xs font-bold text-[#102B35] transition-colors cursor-pointer active:scale-95"
             >
               {downloading ? (
-                <div className="w-4 h-4 border-2 border-[#0F4E44] border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#083D33] border-t-transparent rounded-full animate-spin" />
               ) : (
-                <Download className="w-4 h-4 text-[#0F4E44]" />
+                <Download className="w-4 h-4 text-[#083D33]" />
               )}
-              <span>Download Invoice</span>
+              <span>Download PDF</span>
             </button>
 
             <button
               type="button"
               onClick={handleShare}
-              className="py-3 px-3 rounded-2xl bg-[#F8FAF9] hover:bg-[#EFF4F1] border border-[#E2EBE6] flex items-center justify-center gap-2 text-xs font-bold text-[#102B35] transition-colors cursor-pointer"
+              className="py-3 px-3 rounded-2xl bg-[#F8FAF9] hover:bg-[#EFF5F2] border border-[#E2EBE6] flex items-center justify-center gap-2 text-xs font-bold text-[#102B35] transition-colors cursor-pointer active:scale-95"
             >
-              <Share2 className="w-4 h-4 text-[#0F4E44]" />
-              <span>Share Receipt</span>
+              <Share2 className="w-4 h-4 text-[#083D33]" />
+              <span>Share Pass</span>
             </button>
           </div>
 
-          {/* Done / Return to Home Button */}
+          {/* Done / Return to Store Home */}
           <button
             type="button"
             onClick={onClearAndGoHome}
-            className="w-full py-3.5 px-4 rounded-2xl bg-white border border-[#DCE4E0] hover:bg-[#F8FAF9] text-[#102B35] font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
+            className="w-full py-3.5 px-4 rounded-2xl bg-white border border-[#DCE4E0] hover:bg-[#F8FAF9] text-[#102B35] font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs active:scale-98"
           >
             <Home className="w-4 h-4 text-[#17A890]" />
-            <span>Done · Return to Home</span>
+            <span>Done · Exit to Store Home</span>
           </button>
         </div>
       </div>
